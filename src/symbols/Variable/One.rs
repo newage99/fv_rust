@@ -1,11 +1,11 @@
 use super::super::Symbol::Symbol;
 use super::Variable;
 
-struct One;
+pub struct One;
 
 impl Symbol for One {
-    fn symbol() -> String {
-        return String::from("1");
+    fn symbol(&self) -> &str {
+        return "1";
     }
 }
 

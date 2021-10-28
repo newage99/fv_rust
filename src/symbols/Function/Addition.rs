@@ -1,15 +1,15 @@
 use super::super::Symbol::Symbol;
 use super::Function;
 
-pub struct Add;
+pub struct Addition;
 
-impl Symbol for Add {
-    fn symbol() -> String {
-        return String::from("+");
+impl Symbol for Addition {
+    fn symbol(&self) -> &str {
+        return "+";
     }
 }
 
-impl Function for Add {
+impl Function for Addition {
     fn accepts_multiple_variables() -> bool {
         return true;
     }

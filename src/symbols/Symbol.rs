@@ -1,3 +1,3 @@
-pub trait Symbol {
-    fn symbol() -> String;
+pub trait Symbol: Sync {
+    fn symbol(&self) -> &str;
 }
