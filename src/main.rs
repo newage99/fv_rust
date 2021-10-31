@@ -38,5 +38,5 @@ fn main() {
         global_variables.symbols_map.insert(symbol.symbol(), *symbol);
     }
 
-    RunCommand::run(vec!["id=1 + 1"], global_variables);
+    RunCommand::run(vec!["id=+ 1 1 - 1 1"], global_variables);
 }

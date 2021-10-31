@@ -26,7 +26,11 @@ impl Command for RunCommand {
             println!("'id' parameter not provided.");
             return;
         }
-        FVID::check(id, global_variables);
+        let response = FVID::check(id, global_variables);
+        if response != "" {
+            println!("FVID check:");
+            println!("{}", response);
+        }
     }
     fn help() -> String {
         return String::from("Executes algorithm given parameters.");
