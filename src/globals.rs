@@ -1,6 +1,6 @@
 use super::symbols::Symbol::Symbol;
-use super::symbols::Function::Addition::Addition;
-use super::symbols::Variable::One::One;
+use super::symbols::Function::Function;
+use super::symbols::Variable::Variable;
 use std::collections::HashMap;
 use lazy_static::lazy_static;
 
@@ -20,11 +20,18 @@ impl Global {
     }
 }*/
 
-pub static symbolsList: Vec<Box<dyn Symbol>> = vec![];
-
-fn unbox<T>(value: Box<T>) -> T {
-    *value
+pub struct GlobalVariables {
+    pub symbols_list: Vec<&'static dyn Symbol>,
+    pub symbols_map: HashMap<&'static str, &'static dyn Symbol>,
+    pub functions_list: Vec<&'static dyn Function>,
+    pub functions_map: HashMap<&'static str, &'static dyn Function>,
+    pub variables_list: Vec<&'static dyn Variable>,
+    pub variables_map: HashMap<&'static str, &'static dyn Variable>
 }
+
+/*fn unbox<T>(value: Box<T>) -> T {
+    *value
+}*/
 
 lazy_static! {
     /*pub static ref symbolsList: Vec<Box<dyn Symbol>> = {
@@ -34,7 +41,7 @@ lazy_static! {
         l.push(Box::new(a));
         l
     };*/
-    pub static ref symbolsMap: HashMap<String, Box<dyn Symbol>> = {
+    /*pub static ref symbolsMap: HashMap<String, Box<dyn Symbol>> = {
         let mut m: HashMap<String, Box<dyn Symbol>> = HashMap::new();
         for symbol in symbolsList.iter() {
             let a = String::from(symbol.symbol());
@@ -42,5 +49,5 @@ lazy_static! {
             //m.insert(a, *symbol);
         }
         m
-    };
+    };*/
 }

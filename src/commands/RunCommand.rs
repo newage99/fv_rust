@@ -1,5 +1,6 @@
 use super::super::commands::Command::Command;
 use super::super::FVID::FVID;
+use super::super::globals::GlobalVariables;
 
 pub struct RunCommand;
 
@@ -7,7 +8,7 @@ impl Command for RunCommand {
     fn text() -> String {
         return String::from("Run");
     }
-    fn run(parameters: Vec<&str>) {
+    fn run(parameters: Vec<&str>, global_variables: GlobalVariables) {
         let mut id: &str = "";
         for param in &parameters {
             if param.contains("=") {
@@ -25,7 +26,7 @@ impl Command for RunCommand {
             println!("'id' parameter not provided.");
             return;
         }
-        FVID::check(id);
+        FVID::check(id, global_variables);
     }
     fn help() -> String {
         return String::from("Executes algorithm given parameters.");

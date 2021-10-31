@@ -1,15 +1,15 @@
 use super::super::Symbol::Symbol;
 use super::super::Function::Function;
 
-pub struct Addition;
+pub struct Subtraction;
 
-impl Symbol for Addition {
+impl Symbol for Subtraction {
     fn symbol(&self) -> &str {
-        return "+";
+        return "-";
     }
 }
 
-impl Function for Addition {
+impl Function for Subtraction {
     fn accepts_multiple_variables(&self) -> bool {
         return true;
     }

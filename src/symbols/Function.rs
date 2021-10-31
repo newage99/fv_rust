@@ -1,6 +1,9 @@
-pub mod Addition;
+use super::Symbol::Symbol;
 
-pub trait Function {
-    fn accepts_multiple_variables() -> bool;
-    fn parse(variables: Vec<i128>) -> i128;
+pub mod Addition;
+pub mod Subtraction;
+
+pub trait Function: Symbol {
+    fn accepts_multiple_variables(&self) -> bool;
+    fn parse(&self, variables: Vec<i128>) -> i128;
 }
