@@ -3,70 +3,88 @@ use super::symbols::Function::Function;
 
 pub struct FVID;
 
-fn print_type_of<T>(_: &T) {
-    println!("{}", std::any::type_name::<T>())
+fn min_variables_not_satisfied_error(symbol_str: &str, min_variables: i16, position: i32) -> String {
+    let mut return_str: String = String::from("Function '");
+    return_str.push_str(symbol_str);
+    return_str.push_str("' at position ");
+    return_str.push_str(&position.to_string());
+    return_str.push_str(" cannot process less than ");
+    return_str.push_str(&min_variables.to_string().to_owned());
+    return_str.push_str(" variables.");
+    return return_str;
 }
 
-fn return_min_variables_not_satisfied_error(symbol_str: &str, min_variables_needed: &str) -> String {
-    let mut returnStr: String = String::from("Function '");
-    returnStr.push_str(symbol_str);
-    returnStr.push_str("' cannot process less than ");
-    returnStr.push_str(min_variables_needed);
-    returnStr.push_str(" variables.");
-    return returnStr;
-}
-
-fn check_number_of_variables(function: &dyn Function, number_of_variables_processesed: i16) -> String {
-    if number_of_variables_processesed + 1 < function.min_variables_needed() {
-        
-    }
-    return String::new();
+fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i16, position: i32) -> String {
+    let mut return_str: String = String::from("Function '");
+    return_str.push_str(symbol_str);
+    return_str.push_str("' at position ");
+    return_str.push_str(&position.to_string());
+    return_str.push_str(" cannot process more than ");
+    return_str.push_str(&max_variables.to_string().to_owned());
+    return_str.push_str(" variables.");
+    return return_str;
 }
 
 impl FVID {
     pub fn check(fvid: &str, global_variables: GlobalVariables) -> String {
+
         let split: Vec<&str> = fvid.split(" ").collect();
         let mut first: bool = true;
         let mut number_of_variables_processesed: i16 = 0;
-        let mut last_function: Option<&dyn Function> = None;
+        let mut last_function_option: Option<&dyn Function> = None;
+        let mut last_function_position: i32 = 0;
+        let mut position: i32 = 0;
+
         for fvunit in split {
             if !global_variables.symbols_map.contains_key(fvunit) {
-                let mut returnStr: String = String::from("Not recognized symbol '");
-                returnStr.push_str(fvunit);
-                returnStr.push_str("'.");
-                return returnStr;
+                let mut return_str: String = String::from("Not recognized symbol '");
+                return_str.push_str(fvunit);
+                return_str.push_str("'.");
+                return return_str;
             }
-            let is_a_function = global_variables.functions_map.contains_key(fvunit);
+            let fvunit_is_a_function = global_variables.functions_map.contains_key(fvunit);
             if first {
-                if !is_a_function {
-                    let mut returnStr: String = String::from("FVID must start with a function. '");
-                    returnStr.push_str(fvunit);
-                    returnStr.push_str("' is not a function.");
-                    return returnStr;
+                if !fvunit_is_a_function {
+                    let mut return_str: String = String::from("FVID must start with a function. '");
+                    return_str.push_str(fvunit);
+                    return_str.push_str("' is not a function.");
+                    return return_str;
                 }
                 first = false;
-            }
-            if is_a_function {
-                match last_function {
-                    Some(l_function) => {
-                        let min_variables_needed: i16 = l_function.min_variables_needed();
-                        if number_of_variables_processesed + 1 < min_variables_needed {
-                            return return_min_variables_not_satisfied_error(l_function.symbol(), &min_variables_needed.to_string().to_owned());
+                last_function_option = Some(global_variables.functions_map[fvunit]);
+            } else {
+                match last_function_option {
+                    Some(last_function) => {
+                        let max_variables: i16 = last_function.max_variables();
+                        if max_variables > 0 && number_of_variables_processesed > max_variables {
+                            return max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                        }
+                        if fvunit_is_a_function {
+                            let min_variables_needed: i16 = last_function.min_variables();
+                            if number_of_variables_processesed + 1 < min_variables_needed {
+                                return min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
+                            }
+                            last_function_option = Some(global_variables.functions_map[fvunit]);
+                            last_function_position = position;
+                            number_of_variables_processesed = 0;
+                        } else {
+                            number_of_variables_processesed += 1;
                         }
                     }
                     None => {}
                 }
-                last_function = Some(global_variables.functions_map[fvunit]);
-                number_of_variables_processesed = 0;
-            } else {
-                number_of_variables_processesed += 1;
             }
+            position += 1;
         }
-        match last_function {
-            Some(l_function) => {
-                let min_variables_needed: i16 = l_function.min_variables_needed();
+        match last_function_option {
+            Some(last_function) => {
+                let max_variables: i16 = last_function.max_variables();
+                if max_variables > 0 && number_of_variables_processesed > max_variables {
+                    return max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                }
+                let min_variables_needed: i16 = last_function.min_variables();
                 if number_of_variables_processesed < min_variables_needed {
-                    return return_min_variables_not_satisfied_error(l_function.symbol(), &min_variables_needed.to_string().to_owned());
+                    return min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
                 }
             }
             None => {}

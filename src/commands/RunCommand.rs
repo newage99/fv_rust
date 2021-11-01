@@ -28,8 +28,7 @@ impl Command for RunCommand {
         }
         let response = FVID::check(id, global_variables);
         if response != "" {
-            println!("FVID check:");
-            println!("{}", response);
+            println!("'{}' check: {}", id, response);
         }
     }
     fn help() -> String {

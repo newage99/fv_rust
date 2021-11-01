@@ -2,7 +2,6 @@ use super::symbols::Symbol::Symbol;
 use super::symbols::Function::Function;
 use super::symbols::Variable::Variable;
 use std::collections::HashMap;
-use lazy_static::lazy_static;
 
 /*pub struct Global {
     symbolsList: Vec<Box<dyn Symbol>>,
@@ -33,7 +32,7 @@ pub struct GlobalVariables {
     *value
 }*/
 
-lazy_static! {
+//lazy_static! {
     /*pub static ref symbolsList: Vec<Box<dyn Symbol>> = {
         let mut l = Vec::new();
         let a = Addition;
@@ -50,4 +49,4 @@ lazy_static! {
         }
         m
     };*/
-}
+//}

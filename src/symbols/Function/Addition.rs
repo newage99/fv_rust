@@ -10,7 +10,7 @@ impl Symbol for Addition {
 }
 
 impl Function for Addition {
-    fn min_variables_needed(&self) -> i16 {
+    fn min_variables(&self) -> i16 {
         return 2;
     }
     fn parse(&self, variables: Vec<i128>) -> i128 {
