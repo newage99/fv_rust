@@ -35,7 +35,7 @@ impl Command for RunCommand {
         let fvid: FVID = FVID::create(id, &global_variables);
         let graph: Graph = fvid.compute(4, &global_variables);
         graph.print();*/
-        let response = FVID::create_all_for_number_of_symbols(2, &global_variables);
+        let response = FVID::create_all_for_number_of_symbols(3, &global_variables);
     }
     fn help() -> String {
         return String::from("Executes algorithm given parameters.");

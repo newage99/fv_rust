@@ -143,8 +143,6 @@ impl FVID {
 
     pub fn create_all_for_number_of_symbols(number_of_symbols: i128, global_variables: &GlobalVariables) -> Vec<FVID> {
 
-        println!("create_all_for_number_of_symbols");
-
         let mut fvids: Vec<FVID> = Vec::new();
 
         if number_of_symbols > 1 {
@@ -159,21 +157,38 @@ impl FVID {
             }
             let mut not_finished = true;
             while not_finished {
-                print!("FVID: ");
-                //for fvid_symbol in new_fvid.id.iter() {
+
+                /*print!("FVID: ");
                 for fvid_symbol in &fvid_symbols_list {
                     print!("{} ", fvid_symbol.symbol());
                 }
-                println!("");
+                println!("");*/
+                
                 let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, global_variables);
                 //let check_response: (String, i128) = (String::new(), 0);
                 //let pos_to_change: i128 = number_of_symbols - 1;
                 if check_response.0 == "" {  
-                    //fvid_symbols_list = fvid_symbols_list.to_vec();
-                    let new_fvid: FVID = FVID {
-                        id: fvid_symbols_list.to_vec()
-                    };
-                    fvids.push(new_fvid);
+                    let mut x_or_y_exists: bool = false;
+                    //print!("FVID: ");
+                    for fvid_symbol in &fvid_symbols_list {
+                        //print!("{} ", fvid_symbol.symbol());
+                        let symbol_str: &str = fvid_symbol.symbol();
+                        if symbol_str == "x" || symbol_str == "y" {
+                            x_or_y_exists = true;
+                        }
+                    }
+                    //println!("");
+                    if x_or_y_exists {
+                        print!("FVID: ");
+                        for fvid_symbol in &fvid_symbols_list {
+                            print!("{} ", fvid_symbol.symbol());
+                        }
+                        println!("");
+                        let new_fvid: FVID = FVID {
+                            id: fvid_symbols_list.to_vec()
+                        };
+                        fvids.push(new_fvid);
+                    }
                 }/* else if check_response.1 >= 0 {
                     pos_to_change = check_response.1;
                 }*/
