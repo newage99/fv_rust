@@ -10,7 +10,7 @@ impl Command for RunCommand {
         return String::from("Run");
     }
     fn run(parameters: Vec<&str>, global_variables: GlobalVariables) {
-        let mut id: &str = "";
+        /*let mut id: &str = "";
         for param in &parameters {
             if param.contains("=") {
                 let split = param.split("=").collect::<Vec<&str>>();
@@ -27,13 +27,15 @@ impl Command for RunCommand {
             println!("'id' parameter not provided.");
             return;
         }
-        let response = FVID::check(id, &global_variables);
-        if response != "" {
-            println!("'{}' check: {}", id, response);
+        let response: (String, i128) = FVID::check_str(id, &global_variables);
+        if response.0 != "" {
+            println!("'{}' check: {}", id, response.0);
+            return;
         }
         let fvid: FVID = FVID::create(id, &global_variables);
         let graph: Graph = fvid.compute(4, &global_variables);
-        graph.print();
+        graph.print();*/
+        let response = FVID::create_all_for_number_of_symbols(2, &global_variables);
     }
     fn help() -> String {
         return String::from("Executes algorithm given parameters.");

@@ -10,7 +10,7 @@ impl Symbol for Subtraction {
 }
 
 impl Function for Subtraction {
-    fn min_variables(&self) -> i16 {
+    fn min_variables(&self) -> i128 {
         return 2;
     }
     fn compute(&self, variables: Vec<i128>) -> i128 {

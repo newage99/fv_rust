@@ -8,7 +8,7 @@ pub struct FVID {
     id: Vec<&'static dyn Symbol>
 }
 
-fn min_variables_not_satisfied_error(symbol_str: &str, min_variables: i16, position: i32) -> String {
+fn min_variables_not_satisfied_error(symbol_str: &str, min_variables: i128, position: i128) -> String {
     let mut return_str: String = String::from("Function '");
     return_str.push_str(symbol_str);
     return_str.push_str("' at position ");
@@ -19,7 +19,7 @@ fn min_variables_not_satisfied_error(symbol_str: &str, min_variables: i16, posit
     return return_str;
 }
 
-fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i16, position: i32) -> String {
+fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i128, position: i128) -> String {
     let mut return_str: String = String::from("Function '");
     return_str.push_str(symbol_str);
     return_str.push_str("' at position ");
@@ -31,21 +31,34 @@ fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i16, posit
 }
 
 impl FVID {
-    pub fn check(fvid: &str, global_variables: &GlobalVariables) -> String {
 
-        let split: Vec<&str> = fvid.split(" ").collect();
+    pub fn check_symbols_list(symbols_list: Vec<&dyn Symbol>, global_variables: &GlobalVariables) -> (String, i128) {
+        let str_list: Vec<&str> = Vec::new();
+        for symbol in &symbols_list {
+            str_list.push(symbol.symbol());
+        }
+        return FVID::check_str_list(str_list, global_variables: &GlobalVariables);
+    }
+
+    pub fn check_str(fvid: &str, global_variables: &GlobalVariables) -> (String, i128) {
+        let str_list: Vec<&str> = fvid.split(" ").collect();
+        return FVID::check_str_list(str_list, global_variables: &GlobalVariables)
+    }
+
+    pub fn check_str_list(str_list: Vec<&str>, global_variables: &GlobalVariables) -> (String, i128) {
+
         let mut first: bool = true;
-        let mut number_of_variables_processesed: i16 = 0;
+        let mut number_of_variables_processesed: i128 = 0;
         let mut last_function_option: Option<&dyn Function> = None;
-        let mut last_function_position: i32 = 0;
-        let mut position: i32 = 0;
+        let mut last_function_position: i128 = 0;
+        let mut position: i128 = 0;
 
-        for fvunit in split {
+        for fvunit in str_list {
             if !global_variables.symbols_map.contains_key(fvunit) {
                 let mut return_str: String = String::from("Not recognized symbol '");
                 return_str.push_str(fvunit);
                 return_str.push_str("'.");
-                return return_str;
+                return (return_str, position);
             }
             let fvunit_is_a_function = global_variables.functions_map.contains_key(fvunit);
             if first {
@@ -53,21 +66,23 @@ impl FVID {
                     let mut return_str: String = String::from("FVID must start with a function. '");
                     return_str.push_str(fvunit);
                     return_str.push_str("' is not a function.");
-                    return return_str;
+                    return (return_str, position);
                 }
                 first = false;
                 last_function_option = Some(global_variables.functions_map[fvunit]);
             } else {
                 match last_function_option {
                     Some(last_function) => {
-                        let max_variables: i16 = last_function.max_variables();
+                        let max_variables: i128 = last_function.max_variables();
                         if max_variables > 0 && number_of_variables_processesed > max_variables {
-                            return max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                            let error = max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                            return (error, position + number_of_variables_processesed);
                         }
                         if fvunit_is_a_function {
-                            let min_variables_needed: i16 = last_function.min_variables();
+                            let min_variables_needed: i128 = last_function.min_variables();
                             if number_of_variables_processesed + 1 < min_variables_needed {
-                                return min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
+                                let error = min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
+                                return (error, position + number_of_variables_processesed);
                             }
                             last_function_option = Some(global_variables.functions_map[fvunit]);
                             last_function_position = position;
@@ -83,18 +98,20 @@ impl FVID {
         }
         match last_function_option {
             Some(last_function) => {
-                let max_variables: i16 = last_function.max_variables();
+                let max_variables: i128 = last_function.max_variables();
                 if max_variables > 0 && number_of_variables_processesed > max_variables {
-                    return max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                    let error = max_variables_not_satisfied_error(last_function.symbol(), max_variables, last_function_position);
+                    return (error, position + number_of_variables_processesed);
                 }
-                let min_variables_needed: i16 = last_function.min_variables();
+                let min_variables_needed: i128 = last_function.min_variables();
                 if number_of_variables_processesed < min_variables_needed {
-                    return min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
+                    let error = min_variables_not_satisfied_error(last_function.symbol(), min_variables_needed, last_function_position);
+                    return (error, position + number_of_variables_processesed);
                 }
             }
             None => {}
         }
-        return String::new();
+        return (String::new(), -1);
     }
 
     pub fn create(fvid: &str, global_variables: &GlobalVariables) -> FVID {
@@ -107,6 +124,66 @@ impl FVID {
             id: fvid_vec
         };
         fvid
+    }
+
+    fn get_next_symbol(prev_symbol: &'static dyn Symbol, global_variables: &GlobalVariables) -> &'static dyn Symbol {
+        let get_next_symbol_bool: bool = false;
+        let mut next_symbol: &dyn Symbol = prev_symbol;
+        for symbol in &global_variables.symbols_list {
+            if get_next_symbol_bool {
+                next_symbol = *symbol;
+                break;
+            }
+            if prev_symbol.symbol() == symbol.symbol() {
+                get_next_symbol_bool = true;
+            }
+        }
+        next_symbol
+    }
+
+    pub fn create_all_for_number_of_symbols(number_of_symbols: i128, global_variables: &GlobalVariables) -> Vec<FVID> {
+
+        let fvids: Vec<FVID> = Vec::new();
+
+        if number_of_symbols > 1 {
+
+            let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
+            for i in 0..number_of_symbols {
+                fvid_symbols_list.push(global_variables.symbols_list[0]);
+            }
+            let mut not_finished = true;
+            while not_finished {
+                for fvid_symbol in fvid_symbols_list {
+                    print!("{} ", fvid_symbol.symbol());
+                }
+                let check_response: (String, i128) = FVID::check_symbols_list(fvid_symbols_list, global_variables);
+                //let pos_to_change: i128 = number_of_symbols - 1;
+                if check_response.0 == "" {
+                    let new_fvid: FVID = FVID {
+                        id: fvid_symbols_list
+                    };
+                    fvids.push(new_fvid);
+                }/* else if check_response.1 >= 0 {
+                    pos_to_change = check_response.1;
+                }*/
+                /*for i in (0..number_of_symbols).rev() {
+                }*/
+                let position_counter: i128 = fvid_symbols_list.len() as i128 - 1;
+                for symbol in fvid_symbols_list.iter().rev() {
+                    if symbol.symbol() != global_variables.symbols_list[global_variables.symbols_list.len() - 1].symbol() {
+                        *symbol = FVID::get_next_symbol(*symbol, global_variables: &GlobalVariables);
+                        break;
+                    } else if position_counter > 0 || symbol.symbol() != global_variables.symbols_list[0].symbol() {
+                        *symbol = global_variables.symbols_list[0];
+                    } else {
+                        not_finished = false;
+                    }
+                    position_counter -= 1;
+                }
+            }
+        }
+
+        fvids
     }
 
     fn compute_for_xy(&self, number_of_nodes: i128, x: i128, y: i128, global_variables: &GlobalVariables) -> i128 {
@@ -133,9 +210,9 @@ impl FVID {
         
         let mut matrix: Vec<Vec<i128>> = Vec::new();
 
-        for x in 0..number_of_nodes {
+        for x in 0..(number_of_nodes - 1) {
             let mut new_vec = Vec::new();
-            for y in x..number_of_nodes {
+            for y in (x + 1)..number_of_nodes {
                 new_vec.push(self.compute_for_xy(number_of_nodes, x, y, global_variables));
             }
             matrix.push(new_vec);

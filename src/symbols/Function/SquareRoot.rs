@@ -11,7 +11,7 @@ impl Symbol for SquareRoot {
 }
 
 impl Function for SquareRoot {
-    fn max_variables(&self) -> i16 {
+    fn max_variables(&self) -> i128 {
         return 1;
     }
     fn compute(&self, variables: Vec<i128>) -> i128 {
