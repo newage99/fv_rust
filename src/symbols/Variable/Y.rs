@@ -2,16 +2,16 @@ use super::super::super::globals::GraphParameters;
 use super::super::Symbol::Symbol;
 use super::Variable;
 
-pub struct One;
+pub struct Y;
 
-impl Symbol for One {
+impl Symbol for Y {
     fn symbol(&self) -> &str {
-        "1"
+        "y"
     }
 }
 
-impl Variable for One {
+impl Variable for Y {
     fn compute(&self, parameters: &GraphParameters) -> i128 {
-        1
+        parameters.y
     }
 }

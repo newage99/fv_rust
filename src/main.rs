@@ -2,6 +2,7 @@ extern crate num_integer;
 mod symbols;
 mod commands;
 mod FVID;
+mod Graph;
 mod globals;
 use globals::GlobalVariables;
 use symbols::Symbol::Symbol;
@@ -11,15 +12,18 @@ use symbols::Function::Addition::Addition;
 use symbols::Function::Subtraction::Subtraction;
 use symbols::Function::SquareRoot::SquareRoot;
 use symbols::Variable::One::One;
+use symbols::Variable::X::X;
+use symbols::Variable::Y::Y;
+use symbols::Variable::NumberOfNodes::NumberOfNodes;
 use std::collections::HashMap;
 use commands::Command::Command;
 use commands::RunCommand::RunCommand;
 
 fn main() {
 
-    let symbols: Vec<&dyn Symbol> =     vec![&Addition, &Subtraction, &SquareRoot, &One];
+    let symbols: Vec<&dyn Symbol> =     vec![&Addition, &Subtraction, &SquareRoot, &X, &Y, &NumberOfNodes, &One];
     let functions: Vec<&dyn Function> = vec![&Addition, &Subtraction, &SquareRoot];
-    let variables: Vec<&dyn Variable> = vec![&One];
+    let variables: Vec<&dyn Variable> = vec![&X, &Y, &NumberOfNodes, &One];
     
     let mut global_variables: GlobalVariables = GlobalVariables {
         symbols_list: symbols,
@@ -40,5 +44,5 @@ fn main() {
         global_variables.symbols_map.insert(symbol.symbol(), *symbol);
     }
 
-    RunCommand::run(vec!["id=√ 1 √ 1"], global_variables);
+    RunCommand::run(vec!["id=- n x"], global_variables);
 }

@@ -28,6 +28,12 @@ pub struct GlobalVariables {
     pub variables_map: HashMap<&'static str, &'static dyn Variable>
 }
 
+pub struct GraphParameters {
+    pub x: i128,
+    pub y: i128,
+    pub number_of_nodes: i128
+}
+
 /*fn unbox<T>(value: Box<T>) -> T {
     *value
 }*/

@@ -2,16 +2,16 @@ use super::super::super::globals::GraphParameters;
 use super::super::Symbol::Symbol;
 use super::Variable;
 
-pub struct One;
+pub struct NumberOfNodes;
 
-impl Symbol for One {
+impl Symbol for NumberOfNodes {
     fn symbol(&self) -> &str {
-        "1"
+        "n"
     }
 }
 
-impl Variable for One {
+impl Variable for NumberOfNodes {
     fn compute(&self, parameters: &GraphParameters) -> i128 {
-        1
+        parameters.number_of_nodes
     }
 }
