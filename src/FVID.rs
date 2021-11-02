@@ -32,17 +32,17 @@ fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i128, posi
 
 impl FVID {
 
-    pub fn check_symbols_list(symbols_list: Vec<&dyn Symbol>, global_variables: &GlobalVariables) -> (String, i128) {
-        let str_list: Vec<&str> = Vec::new();
-        for symbol in &symbols_list {
+    pub fn check_symbols_list(symbols_list: &Vec<&dyn Symbol>, global_variables: &GlobalVariables) -> (String, i128) {
+        let mut str_list: Vec<&str> = Vec::new();
+        for symbol in symbols_list {
             str_list.push(symbol.symbol());
         }
-        return FVID::check_str_list(str_list, global_variables: &GlobalVariables);
+        return FVID::check_str_list(str_list, global_variables);
     }
 
     pub fn check_str(fvid: &str, global_variables: &GlobalVariables) -> (String, i128) {
         let str_list: Vec<&str> = fvid.split(" ").collect();
-        return FVID::check_str_list(str_list, global_variables: &GlobalVariables)
+        return FVID::check_str_list(str_list, global_variables);
     }
 
     pub fn check_str_list(str_list: Vec<&str>, global_variables: &GlobalVariables) -> (String, i128) {
@@ -127,7 +127,7 @@ impl FVID {
     }
 
     fn get_next_symbol(prev_symbol: &'static dyn Symbol, global_variables: &GlobalVariables) -> &'static dyn Symbol {
-        let get_next_symbol_bool: bool = false;
+        let mut get_next_symbol_bool: bool = false;
         let mut next_symbol: &dyn Symbol = prev_symbol;
         for symbol in &global_variables.symbols_list {
             if get_next_symbol_bool {
@@ -143,24 +143,35 @@ impl FVID {
 
     pub fn create_all_for_number_of_symbols(number_of_symbols: i128, global_variables: &GlobalVariables) -> Vec<FVID> {
 
-        let fvids: Vec<FVID> = Vec::new();
+        println!("create_all_for_number_of_symbols");
+
+        let mut fvids: Vec<FVID> = Vec::new();
 
         if number_of_symbols > 1 {
 
+            /*let mut new_fvid: &FVID = &FVID {
+                id: vec![]
+            };*/
             let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
             for i in 0..number_of_symbols {
+                //new_fvid.id.push(global_variables.symbols_list[0]);
                 fvid_symbols_list.push(global_variables.symbols_list[0]);
             }
             let mut not_finished = true;
             while not_finished {
-                for fvid_symbol in fvid_symbols_list {
+                print!("FVID: ");
+                //for fvid_symbol in new_fvid.id.iter() {
+                for fvid_symbol in &fvid_symbols_list {
                     print!("{} ", fvid_symbol.symbol());
                 }
-                let check_response: (String, i128) = FVID::check_symbols_list(fvid_symbols_list, global_variables);
+                println!("");
+                let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, global_variables);
+                //let check_response: (String, i128) = (String::new(), 0);
                 //let pos_to_change: i128 = number_of_symbols - 1;
-                if check_response.0 == "" {
+                if check_response.0 == "" {  
+                    //fvid_symbols_list = fvid_symbols_list.to_vec();
                     let new_fvid: FVID = FVID {
-                        id: fvid_symbols_list
+                        id: fvid_symbols_list.to_vec()
                     };
                     fvids.push(new_fvid);
                 }/* else if check_response.1 >= 0 {
@@ -168,17 +179,22 @@ impl FVID {
                 }*/
                 /*for i in (0..number_of_symbols).rev() {
                 }*/
-                let position_counter: i128 = fvid_symbols_list.len() as i128 - 1;
-                for symbol in fvid_symbols_list.iter().rev() {
+                /*new_fvid = &FVID {
+                    id: new_fvid.id.to_vec()
+                };*/
+                for i in (0..fvid_symbols_list.len()).rev() {
+                //for symbol in fvid_symbols_list.iter().rev() {
+                    let symbol: &dyn Symbol = fvid_symbols_list[i];
                     if symbol.symbol() != global_variables.symbols_list[global_variables.symbols_list.len() - 1].symbol() {
-                        *symbol = FVID::get_next_symbol(*symbol, global_variables: &GlobalVariables);
+                        //*symbol = FVID::get_next_symbol(*symbol, global_variables);
+                        fvid_symbols_list[i] = FVID::get_next_symbol(symbol, global_variables);
                         break;
-                    } else if position_counter > 0 || symbol.symbol() != global_variables.symbols_list[0].symbol() {
-                        *symbol = global_variables.symbols_list[0];
+                    } else if i > 0 {
+                        //*symbol = global_variables.symbols_list[0];
+                        fvid_symbols_list[i] = global_variables.symbols_list[0];
                     } else {
                         not_finished = false;
                     }
-                    position_counter -= 1;
                 }
             }
         }
