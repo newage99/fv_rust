@@ -3,9 +3,11 @@ pub struct Graph {
 }
 
 impl Graph {
+
     pub fn number_of_nodes(&self) -> usize {
         self.adjacency_matrix.len()
     }
+
     pub fn adjacency_value(&self, x: usize, y: usize) -> i128 {
         //println!("adjacency_value: {} {}", x, y);
         if x == y {
@@ -16,6 +18,7 @@ impl Graph {
         }
         return self.adjacency_matrix[x][y-x];
     }
+
     pub fn is_connected(&self) -> bool {
         let mut starting_node: i128 = -1;
         let mut row_counter: i128 = 0;
@@ -53,6 +56,24 @@ impl Graph {
         }
         return neighbours_to_visit.len() == self.number_of_nodes();
     }
+
+    pub fn degree(&self) -> i128 {
+        let mut max_degree: i128 = 0;
+        let mut current_degree: i128;
+        for row in self.adjacency_matrix.iter() {
+            current_degree = 0;
+            for adjacency_value in row.iter() {
+                if *adjacency_value > 0 {
+                    current_degree += 1;
+                }
+            }
+            if current_degree > max_degree {
+                max_degree = current_degree;
+            }
+        }
+        max_degree
+    }
+
     pub fn print(&self) {
         for row in self.adjacency_matrix.iter() {
             for adjacency_value in row.iter() {

@@ -32,6 +32,16 @@ fn max_variables_not_satisfied_error(symbol_str: &str, max_variables: i128, posi
 
 impl FVID {
 
+    pub fn to_string(&self) -> String {
+        let mut response: String = String::new();
+        for symbol in &self.id {
+            response.push_str(symbol.symbol());
+            response.push(' ');
+        }
+        response.remove(response.len() - 1);
+        response
+    }
+
     pub fn check_symbols_list(symbols_list: &Vec<&dyn Symbol>, global_variables: &GlobalVariables) -> (String, i128) {
         let mut str_list: Vec<&str> = Vec::new();
         for symbol in symbols_list {
@@ -147,15 +157,12 @@ impl FVID {
 
         if number_of_symbols > 1 {
 
-            /*let mut new_fvid: &FVID = &FVID {
-                id: vec![]
-            };*/
             let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
             for i in 0..number_of_symbols {
-                //new_fvid.id.push(global_variables.symbols_list[0]);
                 fvid_symbols_list.push(global_variables.symbols_list[0]);
             }
             let mut not_finished = true;
+
             while not_finished {
 
                 /*print!("FVID: ");
@@ -165,8 +172,6 @@ impl FVID {
                 println!("");*/
                 
                 let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, global_variables);
-                //let check_response: (String, i128) = (String::new(), 0);
-                //let pos_to_change: i128 = number_of_symbols - 1;
                 if check_response.0 == "" {  
                     let mut x_or_y_exists: bool = false;
                     //print!("FVID: ");
@@ -179,33 +184,23 @@ impl FVID {
                     }
                     //println!("");
                     if x_or_y_exists {
-                        print!("FVID: ");
+                        /*print!("FVID: ");
                         for fvid_symbol in &fvid_symbols_list {
                             print!("{} ", fvid_symbol.symbol());
                         }
-                        println!("");
+                        println!("");*/
                         let new_fvid: FVID = FVID {
                             id: fvid_symbols_list.to_vec()
                         };
                         fvids.push(new_fvid);
                     }
-                }/* else if check_response.1 >= 0 {
-                    pos_to_change = check_response.1;
-                }*/
-                /*for i in (0..number_of_symbols).rev() {
-                }*/
-                /*new_fvid = &FVID {
-                    id: new_fvid.id.to_vec()
-                };*/
+                }
                 for i in (0..fvid_symbols_list.len()).rev() {
-                //for symbol in fvid_symbols_list.iter().rev() {
                     let symbol: &dyn Symbol = fvid_symbols_list[i];
                     if symbol.symbol() != global_variables.symbols_list[global_variables.symbols_list.len() - 1].symbol() {
-                        //*symbol = FVID::get_next_symbol(*symbol, global_variables);
                         fvid_symbols_list[i] = FVID::get_next_symbol(symbol, global_variables);
                         break;
                     } else if i > 0 {
-                        //*symbol = global_variables.symbols_list[0];
                         fvid_symbols_list[i] = global_variables.symbols_list[0];
                     } else {
                         not_finished = false;
