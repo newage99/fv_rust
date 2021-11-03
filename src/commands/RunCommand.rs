@@ -38,43 +38,58 @@ impl Command for RunCommand {
         let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
         println!("");
         for fvid in response {
-            let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8];
+            let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
             let mut graph_list: Vec<Graph> = Vec::new();
-            let mut c: usize = 0;
             let fvid_str: String = fvid.to_string();
-            print!("{} -> connected = ( ", fvid_str);
+            print!("{}", fvid_str);
             for i in &ns {
                 let graph: Graph = fvid.compute(*i, &global_variables);
                 let mut connected: i128 = 0;
                 if graph.is_connected() {
                     connected = 1;
                 }
-                print!("{}: {}", i, connected);
                 graph_list.push(graph);
-                if c < ns.len() - 1 {
-                    print!(",  ");
-                }
-                c += 1;
             }
-            println!(" )");
-            for i in 0..fvid_str.len() {
-                print!(" ");
-            }
-            print!(" ->    degree = ( ");
-            c = 0;
+            let mut connected: bool = true;
             for graph in &graph_list {
-                if graph.is_connected() {
-                    print!("{}: {}", graph.number_of_nodes(), graph.degree());
-                } else {
-                    print!("    ");
+                if !graph.is_connected() {
+                    connected = false;
                 }
-                if c < ns.len() - 1 {
-                    print!(",  ");
-                }
-                c += 1;
             }
-            println!(" )");
-            println!("");
+            if connected {
+                println!("");
+                print!("connected = ( ");
+                let mut c: usize = 0;
+                for graph in &graph_list {
+                    let mut connected: i128 = 0;
+                    if graph.is_connected() {
+                        connected = 1;
+                    }
+                    print!("{}: {}", graph.number_of_nodes(), connected);
+                    if c < ns.len() - 1 {
+                        print!(",  ");
+                    }
+                    c += 1;
+                }
+                println!(" )");
+                print!("   degree = ( ");
+                c = 0;
+                for graph in &graph_list {
+                    if graph.is_connected() {
+                        print!("{}: {}", graph.number_of_nodes(), graph.degree());
+                    } else {
+                        print!("    ");
+                    }
+                    if c < ns.len() - 1 {
+                        print!(",  ");
+                    }
+                    c += 1;
+                }
+                println!(" )");
+                println!("");
+            } else {
+                println!(" - Not connected");
+            }
         }
     }
     fn help() -> String {

@@ -10,8 +10,9 @@ use symbols::Symbol::Symbol;
 use symbols::Function::Function;
 use symbols::Variable::Variable;
 use symbols::Function::Addition::Addition;
-use symbols::Function::Subtraction::Subtraction;
+use symbols::Function::Modulus::Modulus;
 use symbols::Function::SquareRoot::SquareRoot;
+use symbols::Function::Subtraction::Subtraction;
 use symbols::Variable::One::One;
 use symbols::Variable::X::X;
 use symbols::Variable::Y::Y;
@@ -24,8 +25,8 @@ use print::output;
 
 fn main() {
 
-    let symbols: Vec<&dyn Symbol> =     vec![&Addition, &Subtraction, &SquareRoot, &X, &Y, &NumberOfNodes, &One];
-    let functions: Vec<&dyn Function> = vec![&Addition, &Subtraction, &SquareRoot];
+    let symbols: Vec<&dyn Symbol> =     vec![&Addition, &Modulus, &SquareRoot, &Subtraction, &X, &Y, &NumberOfNodes, &One];
+    let functions: Vec<&dyn Function> = vec![&Addition, &Modulus, &SquareRoot, &Subtraction];
     let variables: Vec<&dyn Variable> = vec![&X, &Y, &NumberOfNodes, &One];
     
     let mut global_variables: GlobalVariables = GlobalVariables {

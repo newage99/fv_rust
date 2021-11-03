@@ -10,22 +10,24 @@ impl Symbol for Subtraction {
 }
 
 impl Function for Subtraction {
-    fn min_variables(&self) -> i128 {
-        return 2;
-    }
     fn compute(&self, variables: Vec<i128>) -> i128 {
-        let mut result: i128 = 0;
-        let mut first: bool = true;
-        for v in &variables {
-            if first {
-                result = *v;
-                first = false;
-            } else {
-                result -= v;
+        if variables.len() > 1 {
+            let mut result: i128 = 0;
+            let mut first: bool = true;
+            for v in &variables {
+                if first {
+                    result = *v;
+                    first = false;
+                } else {
+                    result -= v;
+                }
+                //print!("{} ", result);
             }
-            //print!("{} ", result);
+            //println!("");
+            return result;
+        } else if variables.len() == 1 {
+            return -variables[0];
         }
-        //println!("");
-        return result;
+        return 0;
     }
 }

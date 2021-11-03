@@ -10,14 +10,19 @@ impl Symbol for Addition {
 }
 
 impl Function for Addition {
-    fn min_variables(&self) -> i128 {
-        return 2;
-    }
     fn compute(&self, variables: Vec<i128>) -> i128 {
-        let mut result: i128 = 0;
-        for v in &variables {
-            result += v;
+        if variables.len() > 1 {
+            let mut result: i128 = 0;
+            for v in &variables {
+                result += v;
+            }
+            return result;
+        } else if variables.len() == 1 {
+            if variables[0] < 0 {
+                return -variables[0];
+            }
+            return variables[0];
         }
-        return result;
+        return 0;
     }
 }

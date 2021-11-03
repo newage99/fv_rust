@@ -1,8 +1,9 @@
 use super::Symbol::Symbol;
 
 pub mod Addition;
-pub mod Subtraction;
+pub mod Modulus;
 pub mod SquareRoot;
+pub mod Subtraction;
 
 pub trait Function: Symbol {
     fn min_variables(&self) -> i128 {

@@ -5,7 +5,7 @@ pub struct Graph {
 impl Graph {
 
     pub fn number_of_nodes(&self) -> usize {
-        self.adjacency_matrix.len()
+        self.adjacency_matrix.len() + 1
     }
 
     pub fn adjacency_value(&self, x: usize, y: usize) -> i128 {
@@ -37,10 +37,10 @@ impl Graph {
         }
         let mut neighbours_to_visit: Vec<i128> = vec![starting_node];
         let mut visitied_neighbours_counter: usize = 0;
-        while visitied_neighbours_counter < neighbours_to_visit.len() && neighbours_to_visit.len() < self.number_of_nodes() {
+        while visitied_neighbours_counter < neighbours_to_visit.len() && neighbours_to_visit.len() < (self.number_of_nodes() - 1) {
             let main_node_to_find_neighbours_from: i128 = neighbours_to_visit[visitied_neighbours_counter];
             //println!("Main node: {}", main_node_to_find_neighbours_from);
-            for i in 0..self.number_of_nodes() {
+            for i in 0..(self.number_of_nodes() - 1) {
                 let i_i128 = i as i128;
                 let is_not_main_node_itself: bool = i_i128 != main_node_to_find_neighbours_from;
                 if is_not_main_node_itself {
@@ -54,7 +54,7 @@ impl Graph {
             }
             visitied_neighbours_counter += 1;
         }
-        return neighbours_to_visit.len() == self.number_of_nodes();
+        return neighbours_to_visit.len() == (self.number_of_nodes() - 1);
     }
 
     pub fn degree(&self) -> i128 {
