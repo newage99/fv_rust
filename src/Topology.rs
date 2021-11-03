@@ -8,25 +8,21 @@ pub struct Topology {
 
 impl Topology {
 
-    pub fn total_degree(&self) -> i128 {
-
-        let mut degree: i128 = 0;
-
-        for graph in &self.graphs {
-            degree += graph.degree();
-        }
-
-        degree
-    }
-
     pub fn is_connected(&self) -> bool {
         let mut connected: bool = true;
         for graph in &self.graphs {
-            if !graph.is_connected() {
+            if !graph.connected {
                 connected = false;
             }
         }
         connected
+    }
+
+    pub fn print(&self) {
+        for graph in &self.graphs {
+            print!("{} -> ", self.fvid.to_string());
+            graph.print();
+        }
     }
 
     pub fn print_topologies(topologies: Vec<&Topology>) {
@@ -39,7 +35,7 @@ impl Topology {
             print!("{}", fvid_str);
             let mut connected: bool = true;
             for graph in graph_list {
-                if !graph.is_connected() {
+                if !graph.connected {
                     connected = false;
                 }
             }
@@ -49,7 +45,7 @@ impl Topology {
                 let mut c: usize = 0;
                 for graph in graph_list {
                     let mut connected: i128 = 0;
-                    if graph.is_connected() {
+                    if graph.connected {
                         connected = 1;
                     }
                     print!("{}: {}", graph.number_of_nodes(), connected);
@@ -62,8 +58,8 @@ impl Topology {
                 print!("   degree = ( ");
                 c = 0;
                 for graph in graph_list {
-                    if graph.is_connected() {
-                        print!("{}: {}", graph.number_of_nodes(), graph.degree());
+                    if graph.connected {
+                        print!("{}: {}", graph.number_of_nodes(), graph.degree);
                     } else {
                         print!("    ");
                     }

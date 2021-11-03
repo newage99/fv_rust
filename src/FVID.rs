@@ -245,9 +245,7 @@ impl FVID {
             matrix.push(new_vec);
         }
 
-        let graph: Graph = Graph {
-            adjacency_matrix: matrix
-        };
+        let graph: Graph = Graph::create(matrix);
 
         graph
     }

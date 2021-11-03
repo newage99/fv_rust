@@ -42,10 +42,40 @@ impl Command for RunCommand {
         }
         return;*/
 
-        let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
+        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
+        for fvid in &fvids {
+            let fvid_copy: FVID = FVID {
+                id: fvid.id.to_vec()
+            };
+            let new_graph: Graph = fvid_copy.compute(33, &global_variables);
+            if new_graph.connected {
+                //println!("{}", fvid.to_string());
+                let mut c: usize = 0;
+                for t in &topologies {
+                    let current_graph: &Graph = &t.graphs[0];
+                    let current_graph_simple_score: i128 = current_graph.simple_score;
+                    let new_graph_simple_score: i128 = new_graph.simple_score;
+                    if current_graph_simple_score < new_graph_simple_score ||
+                            (current_graph_simple_score == new_graph_simple_score && current_graph.score < new_graph.score) {
+                        break;
+                    }
+                    c += 1;
+                }
+                let mut new_topology: Topology = Topology {
+                    fvid: fvid_copy,
+                    graphs: Vec::new()
+                };
+                new_topology.graphs.push(new_graph);
+                topologies.insert(c, new_topology);
+            }
+        }
+        for t in &topologies {
+            t.print();
+        }
+        /*let mut topologies: Vec<Topology> = Vec::new();
         let ns: Vec<i128> = vec![33];
-        for fvid in &response {
+        for fvid in &fvids {
             let fvid_copy: FVID = FVID {
                 id: fvid.id.to_vec()
             };
@@ -77,18 +107,9 @@ impl Command for RunCommand {
             } else {
                 not_connected_topologies.push(topology);
             }
-            /*for not_connected_topology in not_connected_topologies {
-                ordered_topologies.push(not_connected_topology);
-            }
-            for ordered_topology in new_ordered_topologies {
-                ordered_topologies.push(ordered_topology);
-            }*/
-            //ordered_topologies.append(&mut not_connected_topologies);
-            //ordered_topologies.append(&mut new_ordered_topologies);
         }
-
         Topology::print_topologies(not_connected_topologies);
-        Topology::print_topologies(new_ordered_topologies);
+        Topology::print_topologies(new_ordered_topologies);*/
     }
     fn help() -> String {
         return String::from("Executes algorithm given parameters.");
