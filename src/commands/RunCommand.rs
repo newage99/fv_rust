@@ -36,22 +36,31 @@ impl Command for RunCommand {
         let graph: Graph = fvid.compute(4, &global_variables);
         graph.print();*/
         let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
-        println!("");
-        for fvid in response {
-            let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
+        let mut topologies_list: Vec<(&FVID, Vec<Graph>)> = Vec::new();
+        let mut ordered_topologies_list: Vec<Vec<Graph>> = Vec::new();
+        let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
+        for fvid in &response {
             let mut graph_list: Vec<Graph> = Vec::new();
-            let fvid_str: String = fvid.to_string();
-            print!("{}", fvid_str);
             for i in &ns {
                 let graph: Graph = fvid.compute(*i, &global_variables);
-                let mut connected: i128 = 0;
-                if graph.is_connected() {
-                    connected = 1;
-                }
                 graph_list.push(graph);
             }
+            topologies_list.push((fvid, graph_list));
+        }
+        /*for graph_list in &topologies_list {
+            let not_connected_graph_lists: Vec<Vec<Graph>> = Vec::new();
+            let ordered_topologies_tuple_list: Vec<(i128, Vec<Graph>)> = Vec::new();
+
+        }*/
+        println!("");
+        //for graph_list in &ordered_topologies_list {
+        for tuple in &topologies_list {
+            let fvid = tuple.0;
+            let graph_list = &tuple.1;
+            let fvid_str: String = fvid.to_string();
+            print!("{}", fvid_str);
             let mut connected: bool = true;
-            for graph in &graph_list {
+            for graph in graph_list {
                 if !graph.is_connected() {
                     connected = false;
                 }
@@ -60,7 +69,7 @@ impl Command for RunCommand {
                 println!("");
                 print!("connected = ( ");
                 let mut c: usize = 0;
-                for graph in &graph_list {
+                for graph in graph_list {
                     let mut connected: i128 = 0;
                     if graph.is_connected() {
                         connected = 1;
@@ -74,7 +83,7 @@ impl Command for RunCommand {
                 println!(" )");
                 print!("   degree = ( ");
                 c = 0;
-                for graph in &graph_list {
+                for graph in graph_list {
                     if graph.is_connected() {
                         print!("{}: {}", graph.number_of_nodes(), graph.degree());
                     } else {
