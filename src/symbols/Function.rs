@@ -1,7 +1,9 @@
 use super::Symbol::Symbol;
 
 pub mod Addition;
+pub mod Division;
 pub mod Modulus;
+pub mod Multiplication;
 pub mod SquareRoot;
 pub mod Subtraction;
 

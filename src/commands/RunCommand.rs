@@ -38,7 +38,6 @@ impl Command for RunCommand {
         graph.print();*/
         let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
-        let mut ordered_topologies: Vec<&Topology> = Vec::new();
         let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
         for fvid in &response {
             let fvid_copy: FVID = FVID {
