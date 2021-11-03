@@ -2,6 +2,7 @@ use super::super::commands::Command::Command;
 use super::super::FVID::FVID;
 use super::super::globals::GlobalVariables;
 use super::super::Graph::Graph;
+use super::super::Topology::Topology;
 
 pub struct RunCommand;
 
@@ -36,16 +37,24 @@ impl Command for RunCommand {
         let graph: Graph = fvid.compute(4, &global_variables);
         graph.print();*/
         let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
-        let mut topologies_list: Vec<(&FVID, Vec<Graph>)> = Vec::new();
-        let mut ordered_topologies_list: Vec<Vec<Graph>> = Vec::new();
+        let mut topologies_list: Vec<Topology> = Vec::new();
+        let mut ordered_topologies_list: Vec<Topology> = Vec::new();
         let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
         for fvid in &response {
-            let mut graph_list: Vec<Graph> = Vec::new();
+            let fvid_copy: FVID = FVID {
+                id: fvid.id.to_vec()
+            };
+            let mut new_topology: Topology = Topology {
+                fvid: fvid_copy,
+                graphs: Vec::new()
+            };
+            //let mut graph_list: Vec<Graph> = Vec::new();
             for i in &ns {
                 let graph: Graph = fvid.compute(*i, &global_variables);
-                graph_list.push(graph);
+                //graph_list.push(graph);
+                new_topology.graphs.push(graph);
             }
-            topologies_list.push((fvid, graph_list));
+            topologies_list.push(new_topology);
         }
         /*for graph_list in &topologies_list {
             let not_connected_graph_lists: Vec<Vec<Graph>> = Vec::new();
@@ -54,9 +63,9 @@ impl Command for RunCommand {
         }*/
         println!("");
         //for graph_list in &ordered_topologies_list {
-        for tuple in &topologies_list {
-            let fvid = tuple.0;
-            let graph_list = &tuple.1;
+        for topology in &topologies_list {
+            let fvid = &topology.fvid;
+            let graph_list = &topology.graphs;
             let fvid_str: String = fvid.to_string();
             print!("{}", fvid_str);
             let mut connected: bool = true;

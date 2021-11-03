@@ -3,8 +3,8 @@ mod symbols;
 mod commands;
 mod FVID;
 mod Graph;
+mod Topology;
 mod globals;
-mod print;
 use globals::GlobalVariables;
 use symbols::Symbol::Symbol;
 use symbols::Function::Function;
@@ -20,8 +20,6 @@ use symbols::Variable::NumberOfNodes::NumberOfNodes;
 use std::collections::HashMap;
 use commands::Command::Command;
 use commands::RunCommand::RunCommand;
-use print::make_even;
-use print::output;
 
 fn main() {
 
@@ -47,27 +45,6 @@ fn main() {
     for symbol in &global_variables.symbols_list {
         global_variables.symbols_map.insert(symbol.symbol(), *symbol);
     }
-
-    /*let mut char_index = 0;
-    let three_bytes = vec![224, 239, 64, 191, 64, 191];
-    for i in three_bytes[0]..three_bytes[1] {
-        for j in three_bytes[2]..three_bytes[3] {
-            for k in three_bytes[4]..three_bytes[5] {
-                let mut first = format!("{:X}", i);
-                let mut second = format!("{:X}", j);
-                let mut third = format!("{:X}", k);
-
-                first = make_even(first);
-                second = make_even(second);
-                third = make_even(third);
-
-                char_index = output(
-                    first.to_string() + &second.to_string() + &third.to_string(),
-                    char_index,
-                );
-            }
-        }
-    }*/
 
     RunCommand::run(vec!["id=+ 1 1"], global_variables);
 }

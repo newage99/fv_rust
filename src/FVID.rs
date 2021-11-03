@@ -1,3 +1,4 @@
+use std::marker::Copy;
 use super::globals::GlobalVariables;
 use super::globals::GraphParameters;
 use super::symbols::Symbol::Symbol;
@@ -5,7 +6,7 @@ use super::symbols::Function::Function;
 use super::Graph::Graph;
 
 pub struct FVID {
-    id: Vec<&'static dyn Symbol>
+    pub id: Vec<&'static dyn Symbol>
 }
 
 fn min_variables_not_satisfied_error(symbol_str: &str, min_variables: i128, position: i128) -> String {
