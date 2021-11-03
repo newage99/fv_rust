@@ -11,17 +11,22 @@ pub struct Graph {
 
 impl Graph {
 
-    pub fn create(matrix: Vec<Vec<i128>>) -> Graph {
+    pub fn create(matrix: &Vec<Vec<i128>>) -> Graph {
 
-        let diameters_list = Graph::diameters_list(matrix);
+        let new_matrix = matrix.to_vec();
+        let is_connected: bool = Graph::is_connected(&new_matrix);
+        let mut diameters_list: Vec<i128> = Vec::new();
+        if is_connected {
+            diameters_list = Graph::diameters_list(&new_matrix)
+        }
 
         let graph: Graph = Graph {
-            adjacency_matrix: matrix,
-            connected: Graph::is_connected(matrix),
-            degree: Graph::calculate_degree(matrix),
-            diameters: diameters_list,
-            simple_score: Graph::get_simple_score(matrix, diameters_list),
-            score: Graph::get_score(matrix, diameters_list)
+            adjacency_matrix: new_matrix.to_vec(),
+            connected: is_connected,
+            degree: Graph::calculate_degree(&new_matrix),
+            diameters: diameters_list.to_vec(),
+            simple_score: Graph::get_simple_score(&new_matrix, &diameters_list),
+            score: Graph::get_score(&new_matrix, &diameters_list)
         };
         graph
     }
@@ -30,7 +35,7 @@ impl Graph {
         self.adjacency_matrix.len() + 1
     }
 
-    pub fn adjacency_value(adjacency_matrix: Vec<Vec<i128>>, x: usize, y: usize) -> i128 {
+    pub fn adjacency_value(adjacency_matrix: &Vec<Vec<i128>>, x: usize, y: usize) -> i128 {
         //println!("adjacency_value: {} {}", x, y);
         if x == y {
             return 0;
@@ -41,7 +46,7 @@ impl Graph {
         return adjacency_matrix[x][(y-x)-1];
     }
 
-    pub fn is_connected(adjacency_matrix: Vec<Vec<i128>>) -> bool {
+    pub fn is_connected(adjacency_matrix: &Vec<Vec<i128>>) -> bool {
 
         let mut starting_node: i128 = -1;
         let mut row_counter: i128 = 0;
@@ -83,7 +88,7 @@ impl Graph {
         return neighbours_to_visit.len() == number_of_nodes;
     }
 
-    pub fn calculate_degree(adjacency_matrix: Vec<Vec<i128>>) -> i128 {
+    pub fn calculate_degree(adjacency_matrix: &Vec<Vec<i128>>) -> i128 {
 
         let mut max_degree: i128 = 0;
         let mut current_degree: i128;
@@ -103,7 +108,7 @@ impl Graph {
         max_degree
     }
 
-    pub fn calculate_degree_score(adjacency_matrix: Vec<Vec<i128>>) -> i128 {
+    pub fn calculate_degree_score(adjacency_matrix: &Vec<Vec<i128>>) -> i128 {
 
         let mut degree: i128 = 0;
         let mut current_degree: i128;
@@ -131,11 +136,11 @@ impl Graph {
         degree
     }
 
-    pub fn calculate_diameter(diameters: Vec<i128>) -> i128 {
+    pub fn calculate_diameter(diameters: &Vec<i128>) -> i128 {
 
         let mut max_diameter: i128 = 0;
 
-        for d in &diameters {
+        for d in diameters {
             if *d > max_diameter {
                 max_diameter = *d;
             }
@@ -144,11 +149,11 @@ impl Graph {
         max_diameter
     }
 
-    pub fn calculate_diameter_score(diameters: Vec<i128>) -> i128 {
+    pub fn calculate_diameter_score(diameters: &Vec<i128>) -> i128 {
 
         let mut score: i128 = 0;
 
-        for d in &diameters {
+        for d in diameters {
             score += *d;
         }
 
@@ -156,22 +161,22 @@ impl Graph {
     }
 
     pub fn get_diameter(&self) -> i128 {
-        return Graph::calculate_diameter(self.diameters);
+        return Graph::calculate_diameter(&self.diameters);
     }
 
     pub fn get_diameter_score(&self) -> i128 {
-        return Graph::calculate_diameter_score(self.diameters);
+        return Graph::calculate_diameter_score(&self.diameters);
     }
 
-    pub fn get_simple_score(adjacency_matrix: Vec<Vec<i128>>, diameters: Vec<i128>) -> i128 {
+    pub fn get_simple_score(adjacency_matrix: &Vec<Vec<i128>>, diameters: &Vec<i128>) -> i128 {
         return Graph::calculate_degree(adjacency_matrix) + Graph::calculate_diameter(diameters);
     }
 
-    pub fn get_score(adjacency_matrix: Vec<Vec<i128>>, diameters: Vec<i128>) -> i128 {
+    pub fn get_score(adjacency_matrix: &Vec<Vec<i128>>, diameters: &Vec<i128>) -> i128 {
         return Graph::calculate_degree_score(adjacency_matrix) + Graph::calculate_diameter_score(diameters);
     }
 
-    fn dijkstra(adjacency_matrix: Vec<Vec<i128>>, x: usize, y: usize) -> i128 {
+    fn dijkstra(adjacency_matrix: &Vec<Vec<i128>>, x: usize, y: usize) -> i128 {
 
         let mut to_visit_nodes: Vec<i128> = vec![x as i128];
         let mut visitied_neighbours_counter: usize = 0;
@@ -207,10 +212,10 @@ impl Graph {
         0 // This means 'y' has not been found, ergo, the graph is not connected
     }
 
-    fn diameters_list(adjacency_matrix: Vec<Vec<i128>>) -> Vec<i128> {
+    fn diameters_list(adjacency_matrix: &Vec<Vec<i128>>) -> Vec<i128> {
 
         let number_of_nodes: usize = adjacency_matrix.len() + 1;
-        let diameters: Vec<i128> = Vec::new();
+        let mut diameters: Vec<i128> = Vec::new();
 
         for x in 0..(number_of_nodes - 1) {
             for y in (x + 1)..number_of_nodes {
@@ -239,11 +244,12 @@ impl Graph {
         /*for i in 0..(3 - number_of_nodes.to_string().len()) {
             print!(" ");
         }*/
-        println!(" -> Degree: {} | Degree score: {} | Diameter: {} | Diameter score: {}",
+        println!(" -> Degree: {} | Degree score: {} | Diameter: {} | Diameter score: {} | Total score: {}",
             self.degree,
-            Graph::calculate_degree_score(self.adjacency_matrix),
+            Graph::calculate_degree_score(&self.adjacency_matrix),
             self.get_diameter(),
-            self.get_diameter_score()
+            self.get_diameter_score(),
+            self.score
         );
 
         /*println!("Is connected: {}", self.is_connected());

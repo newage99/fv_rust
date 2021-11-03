@@ -245,7 +245,7 @@ impl FVID {
             matrix.push(new_vec);
         }
 
-        let graph: Graph = Graph::create(matrix);
+        let graph: Graph = Graph::create(&matrix);
 
         graph
     }

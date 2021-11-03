@@ -42,7 +42,7 @@ impl Command for RunCommand {
         }
         return;*/
 
-        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
+        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(4, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
         for fvid in &fvids {
             let fvid_copy: FVID = FVID {
