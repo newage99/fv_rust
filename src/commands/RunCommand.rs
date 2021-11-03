@@ -11,6 +11,7 @@ impl Command for RunCommand {
         return String::from("Run");
     }
     fn run(parameters: Vec<&str>, global_variables: GlobalVariables) {
+        
         /*let mut id: &str = "";
         for param in &parameters {
             if param.contains("=") {
@@ -34,11 +35,16 @@ impl Command for RunCommand {
             return;
         }
         let fvid: FVID = FVID::create(id, &global_variables);
-        let graph: Graph = fvid.compute(4, &global_variables);
-        graph.print();*/
+        let sizes: Vec<i128> = vec![4,6,8,12,16,22,30,31,32,33,50,100];
+        for n in sizes {
+            let graph: Graph = fvid.compute(n, &global_variables);
+            graph.print();
+        }
+        return;*/
+
         let response: Vec<FVID> = FVID::create_all_for_number_of_symbols(3, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
-        let ns: Vec<i128> = vec![3, 4, 5, 6, 7, 8, 9, 10];
+        let ns: Vec<i128> = vec![33];
         for fvid in &response {
             let fvid_copy: FVID = FVID {
                 id: fvid.id.to_vec()
@@ -80,6 +86,7 @@ impl Command for RunCommand {
             //ordered_topologies.append(&mut not_connected_topologies);
             //ordered_topologies.append(&mut new_ordered_topologies);
         }
+
         Topology::print_topologies(not_connected_topologies);
         Topology::print_topologies(new_ordered_topologies);
     }
