@@ -42,15 +42,17 @@ impl Command for RunCommand {
         }
         return;*/
 
-        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(4, &global_variables);
+        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(6, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
-        for fvid in &fvids {
+        for i in 0..fvids.len() {
+        //for fvid in &fvids {
+            let fvid = &fvids[i];
             let fvid_copy: FVID = FVID {
                 id: fvid.id.to_vec()
             };
+            println!("Calculating {}... ({}%)", fvid.to_string(), ((i as f64 / fvids.len() as f64) * 100 as f64) as i128);
             let new_graph: Graph = fvid_copy.compute(33, &global_variables);
             if new_graph.connected {
-                //println!("{}", fvid.to_string());
                 let mut c: usize = 0;
                 for t in &topologies {
                     let current_graph: &Graph = &t.graphs[0];
