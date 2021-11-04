@@ -137,7 +137,7 @@ impl FVID {
         fvid
     }
 
-    fn get_next_symbol(prev_symbol: &'static dyn Symbol, global_variables: &GlobalVariables) -> &'static dyn Symbol {
+    pub fn get_next_symbol(prev_symbol: &'static dyn Symbol, global_variables: &GlobalVariables) -> &'static dyn Symbol {
         let mut get_next_symbol_bool: bool = false;
         let mut next_symbol: &dyn Symbol = prev_symbol;
         for symbol in &global_variables.symbols_list {
@@ -166,30 +166,16 @@ impl FVID {
 
             while not_finished {
 
-                /*print!("FVID: ");
-                for fvid_symbol in &fvid_symbols_list {
-                    print!("{} ", fvid_symbol.symbol());
-                }
-                println!("");*/
-                
                 let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, global_variables);
                 if check_response.0 == "" {  
                     let mut x_or_y_exists: bool = false;
-                    //print!("FVID: ");
                     for fvid_symbol in &fvid_symbols_list {
-                        //print!("{} ", fvid_symbol.symbol());
                         let symbol_str: &str = fvid_symbol.symbol();
                         if symbol_str == "x" || symbol_str == "y" {
                             x_or_y_exists = true;
                         }
                     }
-                    //println!("");
                     if x_or_y_exists {
-                        /*print!("FVID: ");
-                        for fvid_symbol in &fvid_symbols_list {
-                            print!("{} ", fvid_symbol.symbol());
-                        }
-                        println!("");*/
                         let new_fvid: FVID = FVID {
                             id: fvid_symbols_list.to_vec()
                         };

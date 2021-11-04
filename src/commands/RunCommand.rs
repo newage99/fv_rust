@@ -1,15 +1,20 @@
+use std::io::{self, Write};
+
 use super::super::commands::Command::Command;
 use super::super::FVID::FVID;
 use super::super::globals::GlobalVariables;
 use super::super::Graph::Graph;
 use super::super::Topology::Topology;
+use super::super::symbols::Symbol::Symbol;
 
 pub struct RunCommand;
 
 impl Command for RunCommand {
+    
     fn text() -> String {
         return String::from("Run");
     }
+
     fn run(parameters: Vec<&str>, global_variables: GlobalVariables) {
         
         /*let mut id: &str = "";
@@ -42,39 +47,102 @@ impl Command for RunCommand {
         }
         return;*/
 
-        let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(6, &global_variables);
+        //let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(9, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
-        for i in 0..fvids.len() {
-        //for fvid in &fvids {
-            let fvid = &fvids[i];
-            let fvid_copy: FVID = FVID {
-                id: fvid.id.to_vec()
-            };
-            println!("Calculating {}... ({}%)", fvid.to_string(), ((i as f64 / fvids.len() as f64) * 100 as f64) as i128);
-            let new_graph: Graph = fvid_copy.compute(33, &global_variables);
-            if new_graph.connected {
-                let mut c: usize = 0;
-                for t in &topologies {
-                    let current_graph: &Graph = &t.graphs[0];
-                    let current_graph_simple_score: i128 = current_graph.simple_score;
-                    let new_graph_simple_score: i128 = new_graph.simple_score;
-                    if current_graph_simple_score < new_graph_simple_score ||
-                            (current_graph_simple_score == new_graph_simple_score && current_graph.score < new_graph.score) {
-                        break;
+        let mut c: usize;
+        let mut percentage: i128 = 0;
+        let mut last_simple_score: i128 = -1;
+        let mut last_score: i128 = -1;
+        //let mut current_symbol: &str = "";
+        let mut current_first_symbols: Vec<&str> = Vec::new();
+        let current_number_of_first_symbols = 2;
+        for i in 0..current_number_of_first_symbols {
+            current_first_symbols.push("");
+        }
+        let mut not_finished = true;
+        let mut c = 0;
+        let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
+        for i in 0..9 {
+            fvid_symbols_list.push(global_variables.symbols_list[0]);
+        }
+
+        while not_finished {
+
+            let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, &global_variables);
+            c += 1;
+            if c == 5000 {
+                c = 0;
+                print!(".");
+                io::stdout().flush().unwrap();
+            }
+
+            if check_response.0 == "" {  
+                let mut x_or_y_exists: bool = false;
+                for fvid_symbol in &fvid_symbols_list {
+                    let symbol_str: &str = fvid_symbol.symbol();
+                    if symbol_str == "x" || symbol_str == "y" {
+                        x_or_y_exists = true;
                     }
-                    c += 1;
                 }
-                let mut new_topology: Topology = Topology {
-                    fvid: fvid_copy,
-                    graphs: Vec::new()
-                };
-                new_topology.graphs.push(new_graph);
-                topologies.insert(c, new_topology);
+                if x_or_y_exists {
+                    let fvid: FVID = FVID {
+                        id: fvid_symbols_list.to_vec()
+                    };
+                    for i in 0..current_number_of_first_symbols {
+                        if (&fvid.id[i]).symbol() != current_first_symbols[i]  {
+                            println!("");
+                            print!("Current first symbol: ");
+                            for j in 0..current_number_of_first_symbols {
+                                current_first_symbols[j] = (&fvid.id[j]).symbol();
+                                print!("{} ", current_first_symbols[j]);
+                            }
+                            println!("");
+                            break;
+                        }
+                    }
+                    let fvid_copy: FVID = FVID {
+                        id: fvid.id.to_vec()
+                    };
+                    /*let current_percentage = ((i as f64 / fvids.len() as f64) * 100 as f64) as i128;
+                    if current_percentage > percentage {
+                        percentage = current_percentage;
+                        println!("");
+                        println!("Percentage: {}%", percentage);
+                    }*/
+                    let new_graph: Graph = fvid_copy.compute(33, &global_variables);
+                    if new_graph.connected {
+                        c = 0;
+                        if last_simple_score < 0 || new_graph.simple_score < last_simple_score || (new_graph.simple_score == last_simple_score && new_graph.score < last_score) {
+                            let mut new_topology: Topology = Topology {
+                                fvid: fvid_copy,
+                                graphs: Vec::new()
+                            };
+                            last_simple_score = new_graph.simple_score;
+                            last_score = new_graph.score;
+                            new_topology.graphs.push(new_graph);
+                            println!("");
+                            new_topology.print();
+                            topologies.insert(c, new_topology);
+                        }
+                    }
+                }
+            }
+            for i in (0..fvid_symbols_list.len()).rev() {
+                let symbol: &dyn Symbol = fvid_symbols_list[i];
+                if symbol.symbol() != global_variables.symbols_list[global_variables.symbols_list.len() - 1].symbol() {
+                    fvid_symbols_list[i] = FVID::get_next_symbol(symbol, &global_variables);
+                    break;
+                } else if i > 0 {
+                    fvid_symbols_list[i] = global_variables.symbols_list[0];
+                } else {
+                    not_finished = false;
+                }
             }
         }
-        for t in &topologies {
+        /*for t in &topologies {
             t.print();
-        }
+        }*/
+
         /*let mut topologies: Vec<Topology> = Vec::new();
         let ns: Vec<i128> = vec![33];
         for fvid in &fvids {
