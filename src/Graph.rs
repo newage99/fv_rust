@@ -134,10 +134,8 @@ impl Graph {
         }
 
         for x in 0..(number_of_nodes - 1) {
-            let x_i128 = x as i128;
             for y in (x + 1)..number_of_nodes {
-                let y_i128 = y as i128;
-                degree += (x_i128 + y_i128).div_ceil(&2);
+                degree += (degrees[x] + degrees[y]).div_ceil(&2);
             }
         }
 

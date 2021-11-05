@@ -7,6 +7,11 @@ use super::super::Graph::Graph;
 use super::super::Topology::Topology;
 use super::super::symbols::Symbol::Symbol;
 
+use super::super::symbols::Function::Subtraction::Subtraction;
+use super::super::symbols::Function::Addition::Addition;
+use super::super::symbols::Variable::One::One;
+use super::super::symbols::Variable::X::X;
+
 pub struct RunCommand;
 
 impl Command for RunCommand {
@@ -61,16 +66,19 @@ impl Command for RunCommand {
         }
         let mut not_finished = true;
         let mut c = 0;
+        //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&X, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
         let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
-        for i in 0..9 {
+        for i in 0..10 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
         }
+
 
         while not_finished {
 
             let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, &global_variables);
+            
             c += 1;
-            if c == 5000 {
+            if c == 50000 {
                 c = 0;
                 print!(".");
                 io::stdout().flush().unwrap();
@@ -85,13 +93,16 @@ impl Command for RunCommand {
                     }
                 }
                 if x_or_y_exists {
+
+                    
+
                     let fvid: FVID = FVID {
                         id: fvid_symbols_list.to_vec()
                     };
                     for i in 0..current_number_of_first_symbols {
                         if (&fvid.id[i]).symbol() != current_first_symbols[i]  {
                             println!("");
-                            print!("Current first symbol: ");
+                            print!("Current first symbols: ");
                             for j in 0..current_number_of_first_symbols {
                                 current_first_symbols[j] = (&fvid.id[j]).symbol();
                                 print!("{} ", current_first_symbols[j]);
