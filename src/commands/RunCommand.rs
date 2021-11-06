@@ -65,7 +65,7 @@ impl Command for RunCommand {
         }
         let mut not_finished = true;
         let mut c = 0;
-        let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition];
+        let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
         /*let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
         for i in 0..6 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
@@ -88,7 +88,7 @@ impl Command for RunCommand {
             //check_symbols_list_sum += check_symbols_list_diff.num_milliseconds();
             
             c += 1;
-            if c == 500 {
+            if c == 40000 {
                 c = 0;
                 print!(".");
                 io::stdout().flush().unwrap();

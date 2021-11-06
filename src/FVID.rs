@@ -235,9 +235,9 @@ impl FVID {
                     }
                     None => {}
                 }*/
-                variables_to_process = vec![result];
-                /*variables_to_process.clear();
-                variables_to_process.push(result);*/
+                //variables_to_process = vec![result];
+                variables_to_process.clear();
+                variables_to_process.push(result);
             } else {
                 //compute_variable_start_time = Utc::now().time();
                 let result: i128 = global_variables.variables_map[symbol_str].compute(&graph_parameters);
@@ -253,8 +253,7 @@ impl FVID {
                 variables_to_process.insert(0, result);
             }
         }
-        //return (variables_to_process[0], compute_function_duration, compute_variable_duration);
-        return (1, compute_function_duration, compute_variable_duration);
+        return (variables_to_process[0], compute_function_duration, compute_variable_duration);
     }
 
     pub fn compute(&self, number_of_nodes: i128, global_variables: &GlobalVariables) -> (Graph, i64, i64, i64, i64) {
