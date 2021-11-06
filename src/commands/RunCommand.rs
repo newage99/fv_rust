@@ -55,11 +55,8 @@ impl Command for RunCommand {
 
         //let fvids: Vec<FVID> = FVID::create_all_for_number_of_symbols(9, &global_variables);
         let mut topologies: Vec<Topology> = Vec::new();
-        let mut c: usize;
-        let mut percentage: i128 = 0;
         let mut last_simple_score: i128 = -1;
         let mut last_score: i128 = -1;
-        //let mut current_symbol: &str = "";
         let mut current_first_symbols: Vec<&str> = Vec::new();
         let current_number_of_first_symbols = 2;
         for i in 0..current_number_of_first_symbols {
@@ -75,7 +72,10 @@ impl Command for RunCommand {
         let mut n_x_and_y_not_exists = 0;
         let mut n_not_connected = 0;
         let mut n_connected = 0;
-        let mut check_symbols_list_sum = 0;
+        //let mut check_symbols_list_sum = 0;
+        let mut create_matrix_sum = 0;
+        let mut compute_function_sum = 0;
+        let mut compute_variable_sum = 0;
         let mut compute_sum = 0;
 
         while not_finished {
@@ -84,7 +84,7 @@ impl Command for RunCommand {
             let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, &global_variables);
             let check_symbols_list_end_time = Utc::now().time();
             let check_symbols_list_diff = check_symbols_list_end_time - check_symbols_list_start_time;
-            check_symbols_list_sum += check_symbols_list_diff.num_milliseconds();
+            //check_symbols_list_sum += check_symbols_list_diff.num_milliseconds();
             
             c += 1;
             if c == 500 {
@@ -122,10 +122,14 @@ impl Command for RunCommand {
                     };
                     
                     let compute_start_time = Utc::now().time();
-                    let new_graph: Graph = fvid_copy.compute(33, &global_variables);
-                    let compute_end_time = Utc::now().time();
-                    let compute_diff = compute_end_time - compute_start_time;
-                    compute_sum += compute_diff.num_milliseconds();
+                    
+                    //let new_graph: Graph = fvid_copy.compute(33, &global_variables);
+                    let result = fvid_copy.compute(33, &global_variables);
+                    let new_graph = result.0;
+                    create_matrix_sum += result.1;
+                    compute_sum += result.2;
+                    compute_function_sum += result.3;
+                    compute_variable_sum += result.4;
 
                     if new_graph.connected {
                         n_connected += 1;
@@ -162,11 +166,15 @@ impl Command for RunCommand {
             }
         }
 
+        println!("");
         println!("n_x_and_y_not_exists: {}", n_x_and_y_not_exists);
         println!("n_not_connected: {}", n_not_connected);
         println!("n_connected: {}", n_connected);
-        println!("check_symbols_list_sum: {}", check_symbols_list_sum);
-        println!("compute_sum: {}", compute_sum);
+        //println!("check_symbols_list_sum: {}", check_symbols_list_sum);
+        println!("create_matrix_sum: {}", create_matrix_sum / 1000);
+        println!("compute_function_sum: {}", compute_function_sum / 1000);
+        println!("compute_variable_sum: {}", compute_variable_sum / 1000);
+        println!("compute_sum: {}", compute_sum / 1000);
 
         /*for t in &topologies {
             t.print();
