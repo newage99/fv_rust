@@ -1,4 +1,5 @@
 use std::io::{self, Write};
+use chrono::Utc;
 
 use super::super::commands::Command::Command;
 use super::super::FVID::FVID;
@@ -68,17 +69,25 @@ impl Command for RunCommand {
         let mut c = 0;
         //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&X, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
         let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
-        for i in 0..10 {
+        for i in 0..6 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
         }
-
+        let mut n_x_and_y_not_exists = 0;
+        let mut n_not_connected = 0;
+        let mut n_connected = 0;
+        let mut check_symbols_list_sum = 0;
+        let mut compute_sum = 0;
 
         while not_finished {
 
+            let check_symbols_list_start_time = Utc::now().time();
             let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, &global_variables);
+            let check_symbols_list_end_time = Utc::now().time();
+            let check_symbols_list_diff = check_symbols_list_end_time - check_symbols_list_start_time;
+            check_symbols_list_sum += check_symbols_list_diff.num_milliseconds();
             
             c += 1;
-            if c == 50000 {
+            if c == 500 {
                 c = 0;
                 print!(".");
                 io::stdout().flush().unwrap();
@@ -93,9 +102,6 @@ impl Command for RunCommand {
                     }
                 }
                 if x_or_y_exists {
-
-                    
-
                     let fvid: FVID = FVID {
                         id: fvid_symbols_list.to_vec()
                     };
@@ -114,14 +120,15 @@ impl Command for RunCommand {
                     let fvid_copy: FVID = FVID {
                         id: fvid.id.to_vec()
                     };
-                    /*let current_percentage = ((i as f64 / fvids.len() as f64) * 100 as f64) as i128;
-                    if current_percentage > percentage {
-                        percentage = current_percentage;
-                        println!("");
-                        println!("Percentage: {}%", percentage);
-                    }*/
+                    
+                    let compute_start_time = Utc::now().time();
                     let new_graph: Graph = fvid_copy.compute(33, &global_variables);
+                    let compute_end_time = Utc::now().time();
+                    let compute_diff = compute_end_time - compute_start_time;
+                    compute_sum += compute_diff.num_milliseconds();
+
                     if new_graph.connected {
+                        n_connected += 1;
                         c = 0;
                         if last_simple_score < 0 || new_graph.simple_score < last_simple_score || (new_graph.simple_score == last_simple_score && new_graph.score < last_score) {
                             let mut new_topology: Topology = Topology {
@@ -135,7 +142,11 @@ impl Command for RunCommand {
                             new_topology.print();
                             topologies.insert(c, new_topology);
                         }
+                    } else {
+                        n_not_connected += 1;
                     }
+                } else {
+                    n_x_and_y_not_exists += 1;
                 }
             }
             for i in (0..fvid_symbols_list.len()).rev() {
@@ -150,6 +161,13 @@ impl Command for RunCommand {
                 }
             }
         }
+
+        println!("n_x_and_y_not_exists: {}", n_x_and_y_not_exists);
+        println!("n_not_connected: {}", n_not_connected);
+        println!("n_connected: {}", n_connected);
+        println!("check_symbols_list_sum: {}", check_symbols_list_sum);
+        println!("compute_sum: {}", compute_sum);
+
         /*for t in &topologies {
             t.print();
         }*/
