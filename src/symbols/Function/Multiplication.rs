@@ -10,11 +10,11 @@ impl Symbol for Multiplication {
 }
 
 impl Function for Multiplication {
-    fn compute(&self, variables: Vec<i128>) -> i128 {
+    fn compute(&self, variables: &Vec<i128>) -> i128 {
         if variables.len() > 1 {
             let mut result: i128 = 1;
-            for v in &variables {
-                result *= v;
+            for v in variables {
+                result *= *v;
             }
             return result;
         } else if variables.len() == 1 {

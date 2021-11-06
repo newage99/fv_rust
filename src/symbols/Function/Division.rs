@@ -14,10 +14,10 @@ impl Function for Division {
     fn min_variables(&self) -> i128 {
         2
     }
-    fn compute(&self, variables: Vec<i128>) -> i128 {
+    fn compute(&self, variables: &Vec<i128>) -> i128 {
         let mut result: i128 = 0;
         let mut first: bool = true;
-        for v in &variables {
+        for v in variables {
             if *v == 0 {
                 return 0;
             }

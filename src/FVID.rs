@@ -203,11 +203,11 @@ impl FVID {
     fn compute_for_xy(&self, number_of_nodes: i128, x: i128, y: i128, global_variables: &GlobalVariables) -> (i128, i64, i64) {
 
         let mut variables_to_process: Vec<i128> = Vec::new();
-        /*let graph_parameters: GraphParameters = GraphParameters {
+        let graph_parameters: GraphParameters = GraphParameters {
             x: x,
             y: y,
             number_of_nodes: number_of_nodes
-        };*/
+        };
         let mut result;
         let mut symbol_str;
         /*let mut compute_function_start_time;
@@ -225,8 +225,7 @@ impl FVID {
             symbol_str = symbol.symbol();
             if global_variables.functions_map.contains_key(symbol_str) {
                 //compute_function_start_time = Utc::now().time();
-                //result = global_variables.functions_map[symbol_str].compute(variables_to_process);
-                result = 1;
+                result = global_variables.functions_map[symbol_str].compute(&variables_to_process);
                 /*compute_function_end_time = Utc::now().time();
                 compute_function_diff = compute_function_end_time - compute_function_start_time;
                 compute_function_duration = 0;
@@ -236,13 +235,12 @@ impl FVID {
                     }
                     None => {}
                 }*/
-                //variables_to_process = vec![result];
+                variables_to_process = vec![result];
                 /*variables_to_process.clear();
                 variables_to_process.push(result);*/
             } else {
                 //compute_variable_start_time = Utc::now().time();
-                //let result: i128 = global_variables.variables_map[symbol_str].compute(&graph_parameters);
-                result = 1;
+                let result: i128 = global_variables.variables_map[symbol_str].compute(&graph_parameters);
                 /*compute_variable_end_time = Utc::now().time();
                 compute_variable_diff = compute_variable_end_time - compute_variable_start_time;
                 compute_variable_duration = 0;
@@ -252,7 +250,7 @@ impl FVID {
                     }
                     None => {}
                 }*/
-                //variables_to_process.insert(0, result);
+                variables_to_process.insert(0, result);
             }
         }
         //return (variables_to_process[0], compute_function_duration, compute_variable_duration);
@@ -261,13 +259,8 @@ impl FVID {
 
     pub fn compute(&self, number_of_nodes: i128, global_variables: &GlobalVariables) -> (Graph, i64, i64, i64, i64) {
         
-        let create_graph_start_time = Utc::now().time();
-
+        /*let create_graph_start_time = Utc::now().time();
         let mut array_matrix = [[0 as i128; 32]; 32];
-        /*let mut matrix: Vec<Vec<i128>> = vec![Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),
-                                              Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),
-                                              Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(), Vec::new(),
-                                              Vec::new(), Vec::new()];*/
         let mut compute_function_duration = 0;
         let mut compute_variable_duration = 0;
         let mut x_usize: usize;
@@ -294,21 +287,22 @@ impl FVID {
             None => {}
         }
 
-        let compute_start_time = Utc::now().time();
+        let compute_start_time = Utc::now().time();*/
 
         let mut matrix: Vec<Vec<i128>> = Vec::new();
         for x in 0..(number_of_nodes - 1) {
             let mut new_vec = Vec::new();
-            c = 0;
+            //c = 0;
             for y in (x + 1)..number_of_nodes {
-                new_vec.push(array_matrix[x as usize][c]);
-                c += 1;
+                let result = self.compute_for_xy(number_of_nodes, x, y, global_variables);
+                new_vec.push(result.0);
+                //c += 1;
             }
             matrix.push(new_vec);
         }
         let graph: Graph = Graph::create(&matrix);
 
-        let compute_end_time = Utc::now().time();
+        /*let compute_end_time = Utc::now().time();
         let compute_diff = compute_end_time - compute_start_time;
         let mut compute_duration = 0;
         match compute_diff.num_microseconds() {
@@ -316,8 +310,9 @@ impl FVID {
                 compute_duration = duration;
             }
             None => {}
-        }
+        }*/
 
-        (graph, create_graph_duration, compute_duration, compute_function_duration, compute_variable_duration)
+        //(graph, create_graph_duration, compute_duration, compute_function_duration, compute_variable_duration)
+        (graph, 0, 0, 0, 0)
     }
 }

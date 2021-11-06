@@ -10,6 +10,7 @@ use super::super::symbols::Symbol::Symbol;
 
 use super::super::symbols::Function::Subtraction::Subtraction;
 use super::super::symbols::Function::Addition::Addition;
+use super::super::symbols::Variable::NumberOfNodes::NumberOfNodes;
 use super::super::symbols::Variable::One::One;
 use super::super::symbols::Variable::X::X;
 
@@ -64,11 +65,11 @@ impl Command for RunCommand {
         }
         let mut not_finished = true;
         let mut c = 0;
-        //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&X, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
-        let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
+        let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition];
+        /*let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
         for i in 0..6 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
-        }
+        }*/
         let mut n_x_and_y_not_exists = 0;
         let mut n_not_connected = 0;
         let mut n_connected = 0;
@@ -80,10 +81,10 @@ impl Command for RunCommand {
 
         while not_finished {
 
-            let check_symbols_list_start_time = Utc::now().time();
+            //let check_symbols_list_start_time = Utc::now().time();
             let check_response: (String, i128) = FVID::check_symbols_list(&fvid_symbols_list, &global_variables);
-            let check_symbols_list_end_time = Utc::now().time();
-            let check_symbols_list_diff = check_symbols_list_end_time - check_symbols_list_start_time;
+            //let check_symbols_list_end_time = Utc::now().time();
+            //let check_symbols_list_diff = check_symbols_list_end_time - check_symbols_list_start_time;
             //check_symbols_list_sum += check_symbols_list_diff.num_milliseconds();
             
             c += 1;
@@ -121,7 +122,7 @@ impl Command for RunCommand {
                         id: fvid.id.to_vec()
                     };
                     
-                    let compute_start_time = Utc::now().time();
+                    //let compute_start_time = Utc::now().time();
                     
                     //let new_graph: Graph = fvid_copy.compute(33, &global_variables);
                     let result = fvid_copy.compute(33, &global_variables);
@@ -166,15 +167,15 @@ impl Command for RunCommand {
             }
         }
 
-        println!("");
+        /*println!("");
         println!("n_x_and_y_not_exists: {}", n_x_and_y_not_exists);
         println!("n_not_connected: {}", n_not_connected);
         println!("n_connected: {}", n_connected);
-        //println!("check_symbols_list_sum: {}", check_symbols_list_sum);
+        println!("check_symbols_list_sum: {}", check_symbols_list_sum);
         println!("create_matrix_sum: {}", create_matrix_sum / 1000);
         println!("compute_function_sum: {}", compute_function_sum / 1000);
         println!("compute_variable_sum: {}", compute_variable_sum / 1000);
-        println!("compute_sum: {}", compute_sum / 1000);
+        println!("compute_sum: {}", compute_sum / 1000);*/
 
         /*for t in &topologies {
             t.print();
