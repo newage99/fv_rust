@@ -65,18 +65,21 @@ impl Command for RunCommand {
         }
         let mut not_finished = true;
         let mut c = 0;
-        let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
-        /*let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
+        //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
+        let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
         for i in 0..6 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
-        }*/
+        }
         let mut n_x_and_y_not_exists = 0;
         let mut n_not_connected = 0;
         let mut n_connected = 0;
         //let mut check_symbols_list_sum = 0;
         let mut create_matrix_sum = 0;
-        let mut compute_function_sum = 0;
-        let mut compute_variable_sum = 0;
+        let mut init_variables_duration = 0;
+        let mut get_symbol_duration = 0;
+        let mut contains_duration = 0;
+        let mut compute_symbol_duration = 0;
+        let mut variables_modification_duration = 0;
         let mut compute_sum = 0;
 
         while not_finished {
@@ -129,8 +132,11 @@ impl Command for RunCommand {
                     let new_graph = result.0;
                     create_matrix_sum += result.1;
                     compute_sum += result.2;
-                    compute_function_sum += result.3;
-                    compute_variable_sum += result.4;
+                    init_variables_duration += result.3;
+                    get_symbol_duration += result.4;
+                    contains_duration += result.5;
+                    compute_symbol_duration += result.6;
+                    variables_modification_duration += result.7;
 
                     if new_graph.connected {
                         n_connected += 1;
@@ -167,15 +173,19 @@ impl Command for RunCommand {
             }
         }
 
-        /*println!("");
+        println!("");
         println!("n_x_and_y_not_exists: {}", n_x_and_y_not_exists);
         println!("n_not_connected: {}", n_not_connected);
         println!("n_connected: {}", n_connected);
-        println!("check_symbols_list_sum: {}", check_symbols_list_sum);
         println!("create_matrix_sum: {}", create_matrix_sum / 1000);
-        println!("compute_function_sum: {}", compute_function_sum / 1000);
-        println!("compute_variable_sum: {}", compute_variable_sum / 1000);
-        println!("compute_sum: {}", compute_sum / 1000);*/
+        
+        println!("init_variables_duration: {}", init_variables_duration / 1000);
+        println!("get_symbol_duration: {}", get_symbol_duration / 1000);
+        println!("contains_duration: {}", contains_duration / 1000);
+        println!("compute_symbol_duration: {}", compute_symbol_duration / 1000);
+        println!("variables_modification_duration: {}", variables_modification_duration / 1000);
+
+        println!("compute_sum: {}", compute_sum / 1000);
 
         /*for t in &topologies {
             t.print();

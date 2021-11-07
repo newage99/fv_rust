@@ -200,8 +200,9 @@ impl FVID {
         fvids
     }
 
-    fn compute_for_xy(&self, number_of_nodes: i128, x: i128, y: i128, global_variables: &GlobalVariables) -> (i128, i64, i64) {
+    fn compute_for_xy(&self, number_of_nodes: i128, x: i128, y: i128, global_variables: &GlobalVariables) -> (i128, i64, i64, i64, i64, i64) {
 
+        let init_variables_start_time = Utc::now().time();
         let mut variables_to_process: Vec<i128> = Vec::new();
         let graph_parameters: GraphParameters = GraphParameters {
             x: x,
@@ -209,71 +210,133 @@ impl FVID {
             number_of_nodes: number_of_nodes
         };
         let mut result;
-        let mut symbol_str;
-        /*let mut compute_function_start_time;
-        let mut compute_variable_start_time;
-        let mut compute_function_end_time;
-        let mut compute_variable_end_time;
-        let mut compute_function_diff;
-        let mut compute_variable_diff;*/
-        let mut compute_function_duration = 0;
-        let mut compute_variable_duration = 0;
+        let mut symbol_str: &str;
+        let mut is_symbol_a_function: bool;
+        let rev = self.id.iter().rev();
+        let init_variables_end_time = Utc::now().time();
+        let init_variables_diff = init_variables_end_time - init_variables_start_time;
+        let mut init_variables_duration = 0;
+        match init_variables_diff.num_microseconds() {
+            Some(duration) => {
+                init_variables_duration += duration;
+            }
+            None => {}
+        }
 
-        //return (1, compute_function_duration, compute_variable_duration);
+        let mut get_symbol_start_time;
+        let mut contains_start_time;
+        let mut compute_start_time;
+        let mut variables_modification_start_time;
+        let mut get_symbol_diff;
+        let mut contains_diff;
+        let mut compute_diff;
+        let mut variables_modification_diff;
+        let mut get_symbol_duration = 0;
+        let mut contains_duration = 0;
+        let mut compute_symbol_duration = 0;
+        let mut variables_modification_duration = 0;
 
-        for symbol in self.id.iter().rev() {
+        for symbol in rev {
+
+            get_symbol_start_time = Utc::now().time();
             symbol_str = symbol.symbol();
-            if global_variables.functions_map.contains_key(symbol_str) {
-                //compute_function_start_time = Utc::now().time();
+            get_symbol_diff = Utc::now().time() - get_symbol_start_time;
+            get_symbol_duration = 0;
+            match get_symbol_diff.num_microseconds() {
+                Some(duration) => {
+                    get_symbol_duration += duration;
+                }
+                None => {}
+            }
+
+            contains_start_time = Utc::now().time();
+            is_symbol_a_function = global_variables.functions_map.contains_key(symbol_str);
+            contains_diff = Utc::now().time() - contains_start_time;
+            contains_duration = 0;
+            match contains_diff.num_microseconds() {
+                Some(duration) => {
+                    contains_duration += duration;
+                }
+                None => {}
+            }
+
+            if is_symbol_a_function {
+                
+                compute_start_time = Utc::now().time();
                 result = global_variables.functions_map[symbol_str].compute(&variables_to_process);
-                /*compute_function_end_time = Utc::now().time();
-                compute_function_diff = compute_function_end_time - compute_function_start_time;
-                compute_function_duration = 0;
-                match compute_function_diff.num_microseconds() {
+                compute_diff = Utc::now().time() - compute_start_time;
+                compute_symbol_duration = 0;
+                match compute_diff.num_microseconds() {
                     Some(duration) => {
-                        compute_function_duration += duration;
+                        compute_symbol_duration += duration;
                     }
                     None => {}
-                }*/
-                //variables_to_process = vec![result];
+                }
+
+                variables_modification_start_time = Utc::now().time();
                 variables_to_process.clear();
                 variables_to_process.push(result);
-            } else {
-                //compute_variable_start_time = Utc::now().time();
-                let result: i128 = global_variables.variables_map[symbol_str].compute(&graph_parameters);
-                /*compute_variable_end_time = Utc::now().time();
-                compute_variable_diff = compute_variable_end_time - compute_variable_start_time;
-                compute_variable_duration = 0;
-                match compute_variable_diff.num_microseconds() {
+                variables_modification_diff = Utc::now().time() - variables_modification_start_time;
+                variables_modification_duration = 0;
+                match variables_modification_diff.num_microseconds() {
                     Some(duration) => {
-                        compute_variable_duration += duration;
+                        variables_modification_duration += duration;
                     }
                     None => {}
-                }*/
+                }
+            } else {
+                
+                compute_start_time = Utc::now().time();
+                let result: i128 = global_variables.variables_map[symbol_str].compute(&graph_parameters);
+                compute_diff = Utc::now().time() - compute_start_time;
+                compute_symbol_duration = 0;
+                match compute_diff.num_microseconds() {
+                    Some(duration) => {
+                        compute_symbol_duration += duration;
+                    }
+                    None => {}
+                }
+                
+                variables_modification_start_time = Utc::now().time();
                 variables_to_process.insert(0, result);
+                variables_modification_diff = Utc::now().time() - variables_modification_start_time;
+                variables_modification_duration = 0;
+                match variables_modification_diff.num_microseconds() {
+                    Some(duration) => {
+                        variables_modification_duration += duration;
+                    }
+                    None => {}
+                }
             }
         }
-        return (variables_to_process[0], compute_function_duration, compute_variable_duration);
+        return (variables_to_process[0], init_variables_duration, get_symbol_duration, contains_duration, compute_symbol_duration, variables_modification_duration);
     }
 
-    pub fn compute(&self, number_of_nodes: i128, global_variables: &GlobalVariables) -> (Graph, i64, i64, i64, i64) {
+    pub fn compute(&self, number_of_nodes: i128, global_variables: &GlobalVariables) -> (Graph, i64, i64, i64, i64, i64, i64, i64) {
         
-        /*let create_graph_start_time = Utc::now().time();
-        let mut array_matrix = [[0 as i128; 32]; 32];
-        let mut compute_function_duration = 0;
-        let mut compute_variable_duration = 0;
-        let mut x_usize: usize;
-        let mut c = 0;
+        let mut init_variables_duration = 0;
+        let mut get_symbol_duration = 0;
+        let mut contains_duration = 0;
+        let mut compute_symbol_duration = 0;
+        let mut variables_modification_duration = 0;
+
+        let create_graph_start_time = Utc::now().time();
+
+        let mut matrix: Vec<Vec<i128>> = Vec::new();
         for x in 0..(number_of_nodes - 1) {
-            x_usize = x as usize;
-            c = 0;
+            let mut new_vec = Vec::new();
+            //c = 0;
             for y in (x + 1)..number_of_nodes {
-            //for y in 0..number_of_nodes - (x + 1) {
                 let result = self.compute_for_xy(number_of_nodes, x, y, global_variables);
-                array_matrix[x_usize][c] = result.0;
-                //array_matrix[x_usize][c] = 1;
-                c += 1;
+                new_vec.push(result.0);
+                init_variables_duration += result.1;
+                get_symbol_duration += result.2;
+                contains_duration += result.3;
+                compute_symbol_duration += result.4;
+                variables_modification_duration += result.5;
+                //c += 1;
             }
+            matrix.push(new_vec);
         }
 
         let create_graph_end_time = Utc::now().time();
@@ -286,22 +349,12 @@ impl FVID {
             None => {}
         }
 
-        let compute_start_time = Utc::now().time();*/
 
-        let mut matrix: Vec<Vec<i128>> = Vec::new();
-        for x in 0..(number_of_nodes - 1) {
-            let mut new_vec = Vec::new();
-            //c = 0;
-            for y in (x + 1)..number_of_nodes {
-                let result = self.compute_for_xy(number_of_nodes, x, y, global_variables);
-                new_vec.push(result.0);
-                //c += 1;
-            }
-            matrix.push(new_vec);
-        }
+        let compute_start_time = Utc::now().time();
+
         let graph: Graph = Graph::create(&matrix);
 
-        /*let compute_end_time = Utc::now().time();
+        let compute_end_time = Utc::now().time();
         let compute_diff = compute_end_time - compute_start_time;
         let mut compute_duration = 0;
         match compute_diff.num_microseconds() {
@@ -309,9 +362,9 @@ impl FVID {
                 compute_duration = duration;
             }
             None => {}
-        }*/
+        }
 
         //(graph, create_graph_duration, compute_duration, compute_function_duration, compute_variable_duration)
-        (graph, 0, 0, 0, 0)
+        (graph, create_graph_duration, compute_duration, init_variables_duration, get_symbol_duration, contains_duration, compute_symbol_duration, variables_modification_duration)
     }
 }
