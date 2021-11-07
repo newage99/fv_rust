@@ -67,7 +67,7 @@ impl Command for RunCommand {
         let mut c = 0;
         //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
         let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
-        for i in 0..6 {
+        for i in 0..5 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
         }
         let mut n_x_and_y_not_exists = 0;

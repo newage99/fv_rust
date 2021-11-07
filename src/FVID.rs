@@ -213,6 +213,7 @@ impl FVID {
         let mut symbol_str: &str;
         let mut is_symbol_a_function: bool;
         let rev = self.id.iter().rev();
+
         let init_variables_end_time = Utc::now().time();
         let init_variables_diff = init_variables_end_time - init_variables_start_time;
         let mut init_variables_duration = 0;
@@ -250,7 +251,7 @@ impl FVID {
             }
 
             contains_start_time = Utc::now().time();
-            is_symbol_a_function = global_variables.functions_map.contains_key(symbol_str);
+            is_symbol_a_function = global_variables.functions_map.contains_key(&symbol_str);
             contains_diff = Utc::now().time() - contains_start_time;
             contains_duration = 0;
             match contains_diff.num_microseconds() {
