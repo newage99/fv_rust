@@ -18,7 +18,15 @@ impl Function for Multiplication {
             }
             return result;
         } else if variables.len() == 1 {
-            return variables[0] ^ 2;
+            let response = variables[0].checked_pow(2);
+            let mut result: i128 = 1;
+            match response {
+                Some(number) => {
+                    result = number;
+                },
+                None => {}
+            }
+            return result;
         }
         return 0;
     }

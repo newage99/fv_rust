@@ -4,6 +4,7 @@ pub mod Addition;
 pub mod Division;
 pub mod Modulus;
 pub mod Multiplication;
+pub mod Pow;
 pub mod SquareRoot;
 pub mod Subtraction;
 

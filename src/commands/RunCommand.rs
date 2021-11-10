@@ -65,11 +65,11 @@ impl Command for RunCommand {
         }
         let mut not_finished = true;
         let mut c = 0;
-        let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Addition, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
-        /*let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
-        for i in 0..6 {
+        //let mut fvid_symbols_list: Vec<&dyn Symbol> = vec![&Subtraction, &NumberOfNodes, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition, &Addition];
+        let mut fvid_symbols_list: Vec<&dyn Symbol> = Vec::new();
+        for i in 0..9 {
             fvid_symbols_list.push(global_variables.symbols_list[0]);
-        }*/
+        }
         let mut n_x_and_y_not_exists = 0;
         let mut n_not_connected = 0;
         let mut n_connected = 0;
@@ -78,6 +78,7 @@ impl Command for RunCommand {
         let mut compute_function_sum = 0;
         let mut compute_variable_sum = 0;
         let mut compute_sum = 0;
+        let mut number_of_fvids_with_best_score = 0;
 
         while not_finished {
 
@@ -146,6 +147,10 @@ impl Command for RunCommand {
                             println!("");
                             new_topology.print();
                             topologies.insert(c, new_topology);
+                            number_of_fvids_with_best_score = 1;
+                        } else if new_graph.simple_score == last_simple_score && new_graph.score == last_score {
+                            print!("=");
+                            number_of_fvids_with_best_score += 1;
                         }
                     } else {
                         n_not_connected += 1;
@@ -167,6 +172,8 @@ impl Command for RunCommand {
             }
         }
 
+        println!("");
+        println!("number_of_fvids_with_best_score: {}", number_of_fvids_with_best_score);
         /*println!("");
         println!("n_x_and_y_not_exists: {}", n_x_and_y_not_exists);
         println!("n_not_connected: {}", n_not_connected);

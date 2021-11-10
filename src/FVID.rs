@@ -223,7 +223,7 @@ impl FVID {
 
         for symbol in self.id.iter().rev() {
             symbol_str = symbol.symbol();
-            if global_variables.functions_map.contains_key(symbol_str) {
+            if global_variables.functions_map.contains_key(&symbol_str) {
                 //compute_function_start_time = Utc::now().time();
                 result = global_variables.functions_map[symbol_str].compute(&variables_to_process);
                 /*compute_function_end_time = Utc::now().time();
